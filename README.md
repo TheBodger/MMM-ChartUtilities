@@ -15,9 +15,7 @@ there is an additional MMM-ChartCommon module that needs to be included into the
 
 ### NDTF - Neils Data Transfer Format.
 
-#### base schema: 
-
-(using RDF notation ish https://www.w3.org/TR/2004/REC-rdf-concepts-20040210/ https://cran.r-project.org/web/packages/rdflib/vignettes/rdf_intro.html one way to represent the notion "The sky has the color blue" in RDF is as the triple: a subject denoting "the sky", a predicate denoting "has the color", and an object denoting "blue". Therefore, RDF uses subject instead of object (or entity) in contrast to the typical approach of an entity–attribute–value model in object-oriented design: entity (sky), attribute (color), and value (blue). )
+#### base schema: see notes below on extracts on RDF
 
 ```
 Subject: The what, as expressed as a code that can be further expanded if required
@@ -298,10 +296,25 @@ Paramater|Required|Description|Options|Default
 `subject`|Yes|the KEY name to use as a subject for an item|any valid string|none
 `object`|Yes|the object to insert into the item|any valid string|none
 `value`|Yes|the KEY name to use to for the value field of the item|any valid string|none
+`type`|No|the type of the value when added tot he item|numeric (will validate using ...) or string|string
 `timestamp`|No|the KEY name of a timestamp to use for the timestamp field value in the item, or an offset forom the runtime of the module as a number|any valid string (timestamp uses loose moment to validate) Or a negaitive or positive integer of seconds to offset from the tun time|the timestamp of running the module
 `filename`|No|local file name (no paths) to save a serialised version of the files as an array of items|any valid filename or not defined for no ouput. If not defined then the output is displayed to the console|none
 
 ### Structures
 
 #### NDTF Item
+
+{
+"subject": "",
+"object": "",
+"timestamp": "", //created from a new Date(timestamp), where timestamp has been validated by moment
+"value": "" // can be string or numeric
+}
+
+
  
+## Notes
+
+####RDF extracts
+
+(using RDF notation ish https://www.w3.org/TR/2004/REC-rdf-concepts-20040210/ https://cran.r-project.org/web/packages/rdflib/vignettes/rdf_intro.html one way to represent the notion "The sky has the color blue" in RDF is as the triple: a subject denoting "the sky", a predicate denoting "has the color", and an object denoting "blue". Therefore, RDF uses subject instead of object (or entity) in contrast to the typical approach of an entity–attribute–value model in object-oriented design: entity (sky), attribute (color), and value (blue). )
