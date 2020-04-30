@@ -1,0 +1,94 @@
+{
+  "subject": "Europe",
+  "object": "PoliticalEntities",
+  "1": [
+    {
+      "subject": "GB",
+      "object": "country",
+      "1": [
+        {
+          "object": "birthrate",
+          "1": [
+            {
+              "timestamp": "1910-12-31 23:59:59",
+              "value": 23
+            },
+            {
+              "timestamp": "1911-12-31 23:59:59",
+              "value": 26
+            },
+            {
+              "timestamp": "1912-12-31 23:59:59",
+              "value": 66
+            },
+            {
+              "timestamp": "1913-12-31 23:59:59",
+              "value": 99
+            }
+          ]
+        },
+        {
+          "object": "population",
+          "1": [
+            {
+              "timestamp": "1910-12-31 23:59:59",
+              "value": 23000000
+            },
+            {
+              "timestamp": "1911-12-31 23:59:59",
+              "value": 26000000
+            }
+          ]
+        }
+      ],
+        "2":[
+          {
+            "object": "countryname",
+            "value": "Great Britain"
+          },
+          {
+            "object": "countrytype",
+            "value": "multiparty"
+          }
+        ]
+      
+    },
+    {
+      "subject": "FR",
+      "object": "country",
+      "1": [
+        {
+          "object": "birthrate",
+          "1": [
+            {
+              "timestamp": "1910-12-31 23:59:59",
+              "value": 23
+            },
+            {
+              "timestamp": "1911-12-31 23:59:59",
+              "value": 26
+            },
+            {
+              "timestamp": "1912-12-31 23:59:59",
+              "value": 66
+            },
+            {
+              "timestamp": "1913-12-31 23:59:59",
+              "value": 99
+            }
+          ]
+        }
+      ],
+      "2":[
+        {
+          "object": "countryname",
+          "value": "France"
+        },
+        {
+          "object": "countrytype",
+          "value": "single"
+        }
+      ]
+    }
+  ]
+}

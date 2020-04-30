@@ -66,20 +66,20 @@ value = 62,124,982		// the value at this point
 timestamp = 1980-12-12	// at the end of the 1980's
 ```
 
-As this is a rather inefficient though very clear way of expressing information, a final extension is added that is of #### sets.
+As this is a rather inefficient though very clear way of expressing information, a final extension is added that is of **sets**.
 
 The concept of the set allows any particular entry to inherit its subject and object from its parent. the value must always be present along with the timestamp.
 
-this enables the creation of a combined subject from individual items for sharing across applications or storing data in more efficient ways when serialised.
+This enables the creation of the concept of a **combined subject** from one or more individual items for sharing across applications or storing data in more efficient ways when serialised. Any set must be capable of being uncombined back into individual items. 
 
 #### combined subject and sets
 
-an example of an observation set
+an example of an observation **set**
 
 ```
 subject = GB
 object = population
-"set" = one or more (note the value "set" is not included, it is implied when there are items children to a parent level)
+"set" = one or more
 	value = 10000000
 	timestamp = 1600
 	value = 11000000
@@ -89,8 +89,7 @@ object = population
 	value = 13000000
 	timestamp = 1900
 ```
-
-an example of a combined subject
+an example of a combined subject, note no value or timestamp is present as they aren't mandatory at a parent level
 
 ```
 subject = GB
@@ -99,4 +98,49 @@ Object = country
 "set" = one or more observations
 ```
 
-from these examples, it can be seen that it is up to the programmer to determine from the object names how to use the items presented as there is no differentiation between what is a descriptive item and what is an observation.
+and as a final extension to this, there is the combined subject of combined subjects
+
+```
+subject = world
+object = countries
+timestamp = now or at some point in time that this combined subject was created
+value = 254 - not necessary, as the actual count should be calculated from the included country combined subjects
+"set" = one or more combined subject sets
+```
+
+and as a fully formed single combined subject example, held in JSON notation as it should be (not all quotes are included nor full timestamps for brevity)
+
+```
+{subject:GB, 
+object:country,
+set:
+{ //start of set
+{object:isoxxxx_name,value:Great Britain and northern island},
+{object:population,value:65001232,timestamp:2010-10-02 00:00:00}
+}, //end of set
+set:
+{  //start of set
+{object:birthrate,
+set:
+{  //start of set
+{timestamp:1900,value:6498},
+{timestamp:1901,value:6398},
+{timestamp:1902,value:6698},
+{timestamp:1903,value:7298},
+{timestamp:1904,value:6998},
+}  //end of set
+}  //end of set
+}  //end of combined subject
+```
+
+and as a fully formed multiple combined subject example, held in JSON notation as it should be (not all full timestamps are entered for brevity)
+
+Note that instead of using the Varibale name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new hierachy is created the index starts back at "1"
+
+```
+![Example of fully formed JSON](example1.json?raw=true "Example combined subjects set")
+```
+*(example1.json)*
+
+
+From these examples, it can be seen that it is up to the programmer to determine from the object names how to use the items presented as there is no differentiation between what is a descriptive item and what is an observation.
