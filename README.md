@@ -247,7 +247,7 @@ From these examples, it can be seen that it is up to the programmer to determine
 
 Will merge multiple single items that are related at the subject level into a set
 
-Paramaters:
+Parameters:
 
 Variable|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
@@ -261,9 +261,9 @@ Variable|Required|Description|Options|Default
 
 Will merge sets and items into a combined subject, as long as they are related at the subject level
 
-Paramaters:
+Parameters:
 
-Paramater|Required|Description|Options|Default
+Parameter|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
 `subject`|Yes|the combined subject identifier|any valid string|none
 `object`|Yes|the combined subject object defining the relationship between the subject and the sets|any valid string|none
@@ -275,9 +275,9 @@ Paramater|Required|Description|Options|Default
 
 Will merge combined subjects into a combined subject with a single set of the combined subjects
 
-Paramaters:
+Parameters:
 
-Paramater|Required|Description|Options|Default
+Parameter|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
 `subject`|Yes|the combined subjects subject identifier|any valid string|none
 `object`|Yes|the combined subjects object defining the relationship identifies|any valid string|none
@@ -288,9 +288,11 @@ Paramater|Required|Description|Options|Default
 
 Will split a JSON file into items based on provided keys. File must be compatible with JSON.parse
 
-Paramaters:
+will read the parameters from the JSON_splitter.json file local to the JSON_splitter.js.
 
-Paramater|Required|Description|Options|Default
+Parameters:
+
+Parameter|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
 `params`|Yes|an array of one or more sets of the following parameters in JSON format||none
 `subject`|Yes|the KEY name to use as a subject for an item|any valid string|none
