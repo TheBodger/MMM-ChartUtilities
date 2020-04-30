@@ -257,7 +257,7 @@ Variable|Required|Description|Options|Default
 `object`|Yes|the combined subject object defining the relationship between the subject and the sets|any valid string|none
 `value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
 `timestamp`|No|A timestamp to detail when the combined subject object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
-`rationlise`|No|produce minimal JSON by removing subjects and objects at child levels|true or false|false
+`rationalise`|No|produce minimal JSON by removing subjects and objects at child levels|true or false|false
 
 #### Subject joiner
 
@@ -271,7 +271,7 @@ Paramater|Required|Description|Options|Default
 `object`|Yes|the combined subject object defining the relationship between the subject and the sets|any valid string|none
 `value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
 `timestamp`|No|A timestamp to detail when the combined subject object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
-`rationlise`|No|produce minimal JSON by removing subjects and objects at child levels|true or false|false
+`rationalise`|No|produce minimal JSON by removing subjects and objects at child levels|true or false|false
 
 #### Combine joiner
 
@@ -285,3 +285,18 @@ Paramater|Required|Description|Options|Default
 `object`|Yes|the combined subjects object defining the relationship identifies|any valid string|none
 `value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
 `timestamp`|No|A timestamp to detail when the combined subjects object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
+
+
+#### JSON splitter
+
+Will split a JSON file into items based on provided keys
+
+Paramaters:
+
+Paramater|Required|Description|Options|Default
+--------|--------|-----------|-------|-------
+`params`|Yes|an array of one or more sets of the following paramaters in JSON format||none
+`subject`|Yes|the KEY name to use as a subject for an item|any valid string|none
+`object`|Yes|the object to insert into the item|any valid string|none
+`value`|Yes|the KEY name to use to for the value field of the item|any valid string|none
+`timestamp`|No|the KEY name of a timestamp to use for the timestamp field value in the item, or an offset forom the runtime of the module as a number|any valid string (timetamp uses lose moment to validate) Or a negaitive or positive integer of seconds to offset from the tun time|the timestamp of running the module
