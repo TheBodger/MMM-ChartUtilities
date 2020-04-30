@@ -286,10 +286,9 @@ Paramater|Required|Description|Options|Default
 `value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
 `timestamp`|No|A timestamp to detail when the combined subjects object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
 
-
 #### JSON splitter
 
-Will split a JSON file into items based on provided keys
+Will split a JSON file into items based on provided keys. File must be compatible with JSON.parse
 
 Paramaters:
 
@@ -301,3 +300,8 @@ Paramater|Required|Description|Options|Default
 `value`|Yes|the KEY name to use to for the value field of the item|any valid string|none
 `timestamp`|No|the KEY name of a timestamp to use for the timestamp field value in the item, or an offset forom the runtime of the module as a number|any valid string (timestamp uses loose moment to validate) Or a negaitive or positive integer of seconds to offset from the tun time|the timestamp of running the module
 `filename`|No|local file name (no paths) to save a serialised version of the files as an array of items|any valid filename or not defined for no ouput. If not defined then the output is displayed to the console|none
+
+### Structures
+
+#### NDTF Item
+ 
