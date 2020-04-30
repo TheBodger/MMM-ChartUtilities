@@ -138,7 +138,7 @@ and as a fully formed multiple combined subject example, held in JSON notation a
 Note that instead of using the Varibale name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new hierachy is created the index starts back at "1"
 
 ```
-![Example of fully formed JSON](example1.json?raw=true "Example combined subjects set")
+https://cdn.githubusercontent.com/TheBodger/MMM-ChartUtilities/master/example1.json?token=AJ4QC4H4MYCZOKLOSAZDHJK6VLRP6
 ```
 *(example1.json)*
 
