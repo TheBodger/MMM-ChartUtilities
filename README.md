@@ -63,14 +63,16 @@ timestamp = 1970-01-01	// since forever
 subject = GB			// a keyed value
 object = population		// a vague description
 value = 62,124,982		// the value at this point
-timestamp = 1980-12-12	// at the end of the 1980's
+timestamp = 1980-12-12	// at the end of 1980
 ```
 
-As this is a rather inefficient though very clear way of expressing information, a final extension is added that is of **sets**.
+As this is a rather inefficient, though very clear, way of expressing information, a final extension is added, that is of **sets**.
 
 The concept of the set allows any particular entry to inherit its subject and object from its parent. the value must always be present along with the timestamp.
 
 This enables the creation of the concept of a **combined subject** from one or more individual items for sharing across applications or storing data in more efficient ways when serialised. Any set must be capable of being uncombined back into individual items. 
+
+The set is implemented in JSON as an array, with a unique index identifying each set at the same level within the JSON hierarchy.
 
 #### combined subject and sets
 
@@ -108,7 +110,7 @@ value = 254 - not necessary, as the actual count should be calculated from the i
 "set" = one or more combined subject sets
 ```
 
-and as a fully formed single combined subject example, held in JSON notation as it should be (not all quotes are included nor full timestamps for brevity)
+and as a fully formed single combined subject example, 
 
 ```
 {subject:GB, 
@@ -135,7 +137,7 @@ set:
 
 and as a fully formed multiple combined subject example, held in JSON notation as it should be (not all full timestamps are entered for brevity)
 
-Note that instead of using the Varibale name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new hierachy is created the index starts back at "1"
+Note that instead of using the Varibale name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new child hierarchy level is spawned, the index starts back at "1" for that particular branch.
 
 ```JSON
 
@@ -240,3 +242,35 @@ Note that instead of using the Varibale name *set*, it is replaced by a relative
 
 
 From these examples, it can be seen that it is up to the programmer to determine from the object names how to use the items presented as there is no differentiation between what is a descriptive item and what is an observation. Also the sets of data can contin a mix of information.
+
+### Helper code
+
+#### Set Joiner
+
+Will merge multiple single items that are related at the subject level into a set
+
+#### Subject joiner
+
+Will merge sets and items into a combined subject, as long as they are related at the subject level
+
+Variables:
+
+Variable|Required|Description|Options|Default
+--------|--------|-----------|-------|-------
+`subject`|Yes|the combined subject identifier|any valid string|none
+`object`|Yes|the combined subject object defining the relationship between the subject and the sets|any valid string|none
+`value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
+`timestamp`|No|A timestamp to detail when the combined subject object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
+
+#### Combine joiner
+
+Will merge combined subjects into a combined subject with a single set of the combined subjects
+
+Variables:
+
+Variable|Required|Description|Options|Default
+--------|--------|-----------|-------|-------
+`subject`|Yes|the combined subjects subject identifier|any valid string|none
+`object`|Yes|the combined subjects object defining the relationship identifies|any valid string|none
+`value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
+`timestamp`|No|A timestamp to detail when the combined subjects object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
