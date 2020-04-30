@@ -249,11 +249,7 @@ From these examples, it can be seen that it is up to the programmer to determine
 
 Will merge multiple single items that are related at the subject level into a set
 
-#### Subject joiner
-
-Will merge sets and items into a combined subject, as long as they are related at the subject level
-
-Variables:
+Paramaters:
 
 Variable|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
@@ -261,14 +257,29 @@ Variable|Required|Description|Options|Default
 `object`|Yes|the combined subject object defining the relationship between the subject and the sets|any valid string|none
 `value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
 `timestamp`|No|A timestamp to detail when the combined subject object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
+`rationlise` produce minimal JSON by removing subjects and objects at child levels true or false false
+
+#### Subject joiner
+
+Will merge sets and items into a combined subject, as long as they are related at the subject level
+
+Paramaters:
+
+Paramater|Required|Description|Options|Default
+--------|--------|-----------|-------|-------
+`subject`|Yes|the combined subject identifier|any valid string|none
+`object`|Yes|the combined subject object defining the relationship between the subject and the sets|any valid string|none
+`value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
+`timestamp`|No|A timestamp to detail when the combined subject object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
+`rationlise` produce minimal JSON by removing subjects and objects at child levels true or false false
 
 #### Combine joiner
 
 Will merge combined subjects into a combined subject with a single set of the combined subjects
 
-Variables:
+Paramaters:
 
-Variable|Required|Description|Options|Default
+Paramater|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
 `subject`|Yes|the combined subjects subject identifier|any valid string|none
 `object`|Yes|the combined subjects object defining the relationship identifies|any valid string|none
