@@ -257,7 +257,7 @@ Variable|Required|Description|Options|Default
 `object`|Yes|the combined subject object defining the relationship between the subject and the sets|any valid string|none
 `value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
 `timestamp`|No|A timestamp to detail when the combined subject object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
-`rationlise` produce minimal JSON by removing subjects and objects at child levels true or false false
+`rationlise`|No|produce minimal JSON by removing subjects and objects at child levels|true or false|false
 
 #### Subject joiner
 
@@ -271,7 +271,7 @@ Paramater|Required|Description|Options|Default
 `object`|Yes|the combined subject object defining the relationship between the subject and the sets|any valid string|none
 `value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
 `timestamp`|No|A timestamp to detail when the combined subject object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
-`rationlise` produce minimal JSON by removing subjects and objects at child levels true or false false
+`rationlise`|No|produce minimal JSON by removing subjects and objects at child levels|true or false|false
 
 #### Combine joiner
 
