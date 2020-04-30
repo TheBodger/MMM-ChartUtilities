@@ -42,7 +42,7 @@ value = green
 time stamp = the first time someone worked this out
 ```
 
-to extend the schema, there are two types of information, ` observations and `` descriptions.
+to extend the schema, there are two types of information, **observations** and **descriptions**.
 
 a description enhances a subject with further details and an observation is a specific value captured about a subject.
 
