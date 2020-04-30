@@ -137,10 +137,106 @@ and as a fully formed multiple combined subject example, held in JSON notation a
 
 Note that instead of using the Varibale name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new hierachy is created the index starts back at "1"
 
+```JSON
 
-https://cdn.rawgit.com/TheBodger/MMM-ChartUtilities/master/example1.json?token=AJ4QC4H4MYCZOKLOSAZDHJK6VLRP6
+{
+  "subject": "Europe",
+  "object": "PoliticalEntities",
+  "1": [
+    {
+      "subject": "GB",
+      "object": "country",
+      "1": [
+        {
+          "object": "birthrate",
+          "1": [
+            {
+              "timestamp": "1910-12-31 23:59:59",
+              "value": 23
+            },
+            {
+              "timestamp": "1911-12-31 23:59:59",
+              "value": 26
+            },
+            {
+              "timestamp": "1912-12-31 23:59:59",
+              "value": 66
+            },
+            {
+              "timestamp": "1913-12-31 23:59:59",
+              "value": 99
+            }
+          ]
+        },
+        {
+          "object": "population",
+          "1": [
+            {
+              "timestamp": "1910-12-31 23:59:59",
+              "value": 23000000
+            },
+            {
+              "timestamp": "1911-12-31 23:59:59",
+              "value": 26000000
+            }
+          ]
+        }
+      ],
+      "2":[
+        {
+          "object": "countryname",
+          "value": "Great Britain"
+        },
+        {
+          "object": "countrytype",
+          "value": "multiparty"
+        }
+      ]
+      
+    },
+    {
+      "subject": "FR",
+      "object": "country",
+      "1": [
+        {
+          "object": "birthrate",
+          "1": [
+            {
+              "timestamp": "1910-12-31 23:59:59",
+              "value": 23
+            },
+            {
+              "timestamp": "1911-12-31 23:59:59",
+              "value": 26
+            },
+            {
+              "timestamp": "1912-12-31 23:59:59",
+              "value": 66
+            },
+            {
+              "timestamp": "1913-12-31 23:59:59",
+              "value": 99
+            }
+          ]
+        }
+      ],
+      "2":[
+        {
+          "object": "countryname",
+          "value": "France"
+        },
+        {
+          "object": "countrytype",
+          "value": "single"
+        }
+      ]
+    }
+  ]
+}
+
+```
 
 *(example1.json)*
 
 
-From these examples, it can be seen that it is up to the programmer to determine from the object names how to use the items presented as there is no differentiation between what is a descriptive item and what is an observation.
+From these examples, it can be seen that it is up to the programmer to determine from the object names how to use the items presented as there is no differentiation between what is a descriptive item and what is an observation. Also the sets of data can contin a mix of information.
