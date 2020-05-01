@@ -294,14 +294,14 @@ Parameters:
 
 Parameter|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
-`infile`|No|The filename of the input JSON|any valid filename local to the module|input.json
+`input`|No|The locator of the input JSON|any valid fs supported locator|./input.json
 `params`|Yes|an array of one or more sets of the following parameters in JSON format||none
 `rootkey`|No|the key value to determine at what level to extract data|a valid string|the first level
 `subject`|Yes|the KEY name to use as a subject for an item|any valid string|none
 `object`|Yes|the object to insert into the item|any valid string|none
 `value`|Yes|the KEY name to use to for the value field of the item|any valid string|none
 `type`|No|the type of the value when added to the item|numeric (will validate using parsefloat) or string|string
-`timestamp`|No|the KEY name of a timestamp to use for the timestamp field value in the item, or an offset from the runtime of the module as a number|any valid string (timestamp uses loose moment to validate) Or a negative or positive integer of seconds to offset from the tun time|the timestamp of running the module
+`timestamp`|No|the KEY name of a timestamp to use for the timestamp field value in the item, or an offset from the runtime of the module as a number|any valid string (timestamp uses loose moment to validate - https://momentjs.com/docs/) Or a negative or positive integer of seconds to offset from the run time|the timestamp of running the module
 `timestampformat`|No|a moment compatible timestamp format used to validate any dates found|timestamp string|None - dont use any format
 `filename`|No|local file name (no paths) to save a serialised version of the extracted data as an array of items|any valid filename or not defined for no output. If not defined then the output is displayed to the console|none
 

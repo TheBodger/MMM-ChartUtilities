@@ -47,7 +47,7 @@ var getJSONfile = function (filename) { //check and load a json file
 };
 
     const defaults = {
-        infile:"input.json" // | No | The filename of the input JSON | any valid filename local to the module | input.json
+        input:"./input.json"    // | No | The locator of the input JSON | any valid fs locator | ./input.json
     }
 
     const paramdefaults = {
@@ -56,10 +56,10 @@ var getJSONfile = function (filename) { //check and load a json file
         object: null,            // | Yes | the object to insert into the item | any valid string | none
         value: null,             // | Yes | the KEY name to use to for the value field of the item | any valid string | none
         type: "string",          // | No | the type of the value when added tot he item | numeric(will validate using parsefloat) or string | string
-        timestamp: new Date(),   // | No | the KEY name of a timestamp to use for the timestamp field value in the item, or an offset from the runtime of the module as a number | any valid string(timestamp uses loose moment to validate) Or a negaitive or positive integer of seconds to offset from the tun time | the timestamp of running the module
+        timestamp: 0,            // | No | the KEY name of a timestamp to use for the timestamp field value in the item, or an offset from the runtime of the module as a number | any valid string(timestamp uses loose moment to validate) Or a negaitive or positive integer of seconds to offset from the tun time | the timestamp of running the module (i.e. use offset of 0)
+        timestampformat:null,    // | No | a moment compatible timestamp format used to validate any dates found | timestamp string | Null - dont use any format
         filename: null           // | No | local file name(no paths) to save a serialised version of the extracted data as an array of items | any valid filename or not defined for no output.If not defined then the output is displayed to the console | none
 }
-
 
     // get config file
 //and validates it is json at the same time ??
@@ -102,10 +102,10 @@ for (var idx = 0; idx < cpl; idx++) {
 
     if (param.type == 'numeric') { param["usenumericoutput"] = true;}
 
-    if (typeof param.timestamp == "number") { //wants an offset of the runtime, provided in seconds
+    if (typeof param.timestamp == "number") { //wants an offset of the runtime, provided in seconds, or it was blank
 
         param["useruntime"] = true;
-        param["adjustedruntime"] = new Date(moduleruntime.getTime() + (t.timestamp*1000));
+        param["runtime"] = new Date(moduleruntime.getTime() + (param.timestamp*1000));
 
     }
 
@@ -121,12 +121,7 @@ var outputarray = new Array(config.params.length)// param and then items
 
 for (cidx = 0; cidx < config.params.length; cidx++) {outputarray[cidx]=[];}
 
-if (config.filename == null) { inputjsonfilename = "./input.json"; } else {
-
-    inputjsonfilename = "./" + config.filename; 
-}
-
-const inputjson = getJSONfile(inputjsonfilename);
+const inputjson = getJSON(fs.readFileSync(config.input));
 
 if (inputjson == null) { process.exit(1); }
 
@@ -252,7 +247,7 @@ for (var cidx = 0; cidx < config.params.length; cidx++) {
 
         // write out to a file
 
-        fs.writeFile("./" + config.params[cidx].filename, JSON.stringify(outputarray[cidx]));
+        fs.writeFileSync("./" + config.params[cidx].filename, JSON.stringify(outputarray[cidx]));
 
         console.info(outputarray[cidx].length);
 

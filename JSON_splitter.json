@@ -1,21 +1,22 @@
 {
+  "input": "./covid.json",
   "params": [
     {
       "rootkey": "records",
       "subject": "geoId",
       "object": "population",
       "value": "popData2018",
-      "timestamp": "dateRep",
-      "timestampformat": "DD-MM-YYYY"
+      "filename": "population.json"
     },
     {
       "rootkey": "records",
       "subject": "geoId",
-      "object": "continent",
+      "object": "coviddeaths",
       "value": "deaths",
       "type": "numeric",
       "timestamp": "dateRep",
-      "timestampformat": "DD-MM-YYYY"
+      "timestampformat": "DD-MM-YYYY",
+      "filename": "coviddeaths.json"
     }
   ]
 }
