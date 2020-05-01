@@ -6,14 +6,41 @@
 //  4) build a new item for each key match found from any passed subject,object,timestamp.
 //  5) either display to console or write to file as a JSON.stringify all of the items as an array of items
 
+const moduleruntime = new Date();
 
-var getJSON = function (JSONstring) { //validate if the provided number is valid 
+// get required scripts
+
+const fs = require("fs");
+const moment = require("moment");
+
+// get required structures
+
+const structures = require("./structures.js");
+
+var getJSON = function (JSONstring) { //check and load a json file
     try {
         const JSONObject = JSON.parse(JSONstring)
 
         return JSONObject;
 
     } catch (err) {
+        console.error("String:",JSONstring)
+        console.error(err)
+    }
+    return (null);
+};
+
+var getJSONfile = function (filename) { //check and load a json file
+    //why doesnt this work ??
+     //need to put try catch here or return thee require
+
+    try {
+        const JSONObject = require(filename)
+
+        return JSONObject;
+
+    } catch (err) {
+        console.error("File:", filename)
         console.error(err)
     }
     return (null);
@@ -33,27 +60,18 @@ var getJSON = function (JSONstring) { //validate if the provided number is valid
         filename: null           // | No | local file name(no paths) to save a serialised version of the extracted data as an array of items | any valid filename or not defined for no output.If not defined then the output is displayed to the console | none
 }
 
-    // get required scripts
-
-const fs = require("fs");
-
-    // get required structures
-
-const structures = require("./structures.js");
 
     // get config file
 //and validates it is json at the same time ??
 
-    const configfile = require("./JSON_splitter.json");
+const configfile = getJSONfile("./JSON_splitter.json");
 
     //validate we can JSON,parse it
     //check it has at least one params entry
 
-var isJSON = getJSON(JSON.stringify(configfile)); 
+if (configfile == null) { process.exit(1); }
 
-    if (isJSON == null) { process.exit(1); }
-
-    let inconfig = isJSON;
+let inconfig = configfile;
 
     if (inconfig.params == null) {
         console.error("No parameters found in config file");
@@ -71,17 +89,177 @@ let config = { ...defaults, ...inconfig };
  config.params = [];
 
     // for each of the parameters found, merge with the defaults
+    // process the timestamp option
 
 const cpl = inconfig.params.length;
 
 for (var idx = 0; idx < cpl; idx++) {
 
-    var t = Object.assign({}, paramdefaults, inconfig.params[idx]);
+    var param = Object.assign({}, paramdefaults, inconfig.params[idx]);
 
-        config.params.push (t );
+    param["useruntime"] = false;
+    param["usenumericoutput"] = false;
+
+    if (param.type == 'numeric') { param["usenumericoutput"] = true;}
+
+    if (typeof param.timestamp == "number") { //wants an offset of the runtime, provided in seconds
+
+        param["useruntime"] = true;
+        param["adjustedruntime"] = new Date(moduleruntime.getTime() + (t.timestamp*1000));
 
     }
 
+    config.params.push(param);
 
-const a = " dfg ";
+}
+
+//------------------------------------------ process input data --------------------------------
+
+// all the configs are good so we can now start processing the actual data
+
+var outputarray = new Array(config.params.length)// param and then items
+
+for (cidx = 0; cidx < config.params.length; cidx++) {outputarray[cidx]=[];}
+
+if (config.filename == null) { inputjsonfilename = "./input.json"; } else {
+
+    inputjsonfilename = "./" + config.filename; 
+}
+
+const inputjson = getJSONfile(inputjsonfilename);
+
+if (inputjson == null) { process.exit(1); }
+
+var jsonarray = inputjson[config.params[0].rootkey];
+
+//this should now be an array that we can process in the simplest case
+
+//check it actually contains something, assuming if empty it is in error
+
+if (jsonarray.length == 0) { console.error("json array is empty"); process.exit(1); }
+
+for (var idx = 0; idx < jsonarray.length; idx++) {
+
+    //look for any key value pairs required and create an item
+
+    for (var cidx = 0; cidx < config.params.length; cidx++) {
+
+        var processthisitem = false;
+
+        var tempitem = new structures.NDTFItem()
+
+        tempitem.object = config.params[cidx].object; 
+
+        //do we have a subject
+
+        if (jsonarray[idx][config.params[cidx].subject] != null) {
+
+            tempitem.subject = jsonarray[idx][config.params[cidx].subject];
+
+            //do we have a value
+
+            if (jsonarray[idx][config.params[cidx].value] != null) {
+
+                //check if numeric 
+
+                if (config.params[cidx].usenumericoutput) {
+                    if (isNaN(parseFloat(jsonarray[idx][config.params[cidx].value]))) {
+                        console.error("Invalid numeric value: " + jsonarray[idx][config.params[cidx].value]);
+                    }
+                    else {
+                        tempitem.value = parseFloat(jsonarray[idx][config.params[cidx].value]);
+                    }
+                }
+                else {
+                    tempitem.value = jsonarray[idx][config.params[cidx].value];
+                }
+
+                //if the timestamp is requested do we have one of those as well
+
+                if (!config.params[cidx].useruntime) {
+
+                    //got a timestamp key, now validate it
+
+                    var temptimestamp = jsonarray[idx][config.params[cidx].timestamp];
+
+                    if (temptimestamp != null) {
+
+                        if (config.params[cidx].timestampformat != null) {
+
+                            if (moment(temptimestamp, config.params[cidx].timestampformat).isValid()) {
+
+                                //got a good date
+
+                                tempitem.timestamp = moment(temptimestamp, config.params[cidx].timestampformat).toDate();
+
+                                processthisitem = true;
+
+                            }
+                            else { console.error("Invalid date");}
+
+                        }
+
+                        else {
+
+                            if (moment(temptimestamp).isValid()) {
+
+                                //got a good date
+
+                                tempitem.timestamp = moment(temptimestamp).toDate();
+
+                                processthisitem = true;
+
+                            }
+                            else { console.error("Invalid date"); }
+
+                        }
+
+                    }
+                }
+                else { // use an offset timestamp
+
+                    tempitem.timestamp = config.params[cidx].adjustedruntime;
+
+                    processthisitem = true;
+
+                }
+
+            }
+
+        }
+
+        if (processthisitem) {
+
+            outputarray[cidx].push(tempitem);
+
+        }
+
+        delete tempitem;
+
+    }  //end of process loop - params
+
+
+}  //end of process loop - input array
+
+//now determine what to do next
+
+for (var cidx = 0; cidx < config.params.length; cidx++) {
+
+    if (config.params[cidx].filename == null) {
+        console.info(outputarray[cidx]);
+    }
+    else {
+
+        // write out to a file
+
+        fs.writeFile("./" + config.params[cidx].filename, JSON.stringify(outputarray[cidx]));
+
+        console.info(outputarray[cidx].length);
+
+    }
+
+}
+
+
+
 

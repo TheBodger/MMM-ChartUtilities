@@ -1,3 +1,21 @@
 {
-  "params": [ {} ]
+  "params": [
+    {
+      "rootkey": "records",
+      "subject": "geoId",
+      "object": "population",
+      "value": "popData2018",
+      "timestamp": "dateRep",
+      "timestampformat": "DD-MM-YYYY"
+    },
+    {
+      "rootkey": "records",
+      "subject": "geoId",
+      "object": "continent",
+      "value": "deaths",
+      "type": "numeric",
+      "timestamp": "dateRep",
+      "timestampformat": "DD-MM-YYYY"
+    }
+  ]
 }

@@ -301,8 +301,16 @@ Parameter|Required|Description|Options|Default
 `object`|Yes|the object to insert into the item|any valid string|none
 `value`|Yes|the KEY name to use to for the value field of the item|any valid string|none
 `type`|No|the type of the value when added to the item|numeric (will validate using parsefloat) or string|string
-`timestamp`|No|the KEY name of a timestamp to use for the timestamp field value in the item, or an offset from the runtime of the module as a number|any valid string (timestamp uses loose moment to validate) Or a negaitive or positive integer of seconds to offset from the tun time|the timestamp of running the module
+`timestamp`|No|the KEY name of a timestamp to use for the timestamp field value in the item, or an offset from the runtime of the module as a number|any valid string (timestamp uses loose moment to validate) Or a negative or positive integer of seconds to offset from the tun time|the timestamp of running the module
+`timestampformat`|No|a moment compatible timestamp format used to validate any dates found|timestamp string|None - dont use any format
 `filename`|No|local file name (no paths) to save a serialised version of the extracted data as an array of items|any valid filename or not defined for no output. If not defined then the output is displayed to the console|none
+
+how to handle variable named keys where the key name is the subject ?
+how to determine if there is something we can extract to determine time zone
+how to pass a timezone through config so times are corrected for UTC
+
+need to ensure there is always an object at the parent level when we output
+
 
 ### Structures
 
