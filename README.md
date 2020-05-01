@@ -294,7 +294,7 @@ Parameters:
 
 Parameter|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
-`input`|No|The locator of the input JSON|any valid fs supported locator|./input.json
+`input`|No|The locator of the input JSON|any valid fs supported locator OR if the locator starts with HTTP, then a valid HTTP or HTTPS URL that points at JSON|./input.json
 `params`|Yes|an array of one or more sets of the following parameters in JSON format||none
 `rootkey`|No|the key value to determine at what level to extract data|a valid string|the first level
 `subject`|Yes|the KEY name to use as a subject for an item|any valid string|none

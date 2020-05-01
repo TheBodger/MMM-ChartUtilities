@@ -19,13 +19,14 @@ const structures = require("./structures.js");
 
 var getJSON = function (JSONstring) { //check and load a json file
     try {
-        const JSONObject = JSON.parse(JSONstring)
+        const JSONObject = JSON.parse(JSONstring);
 
         return JSONObject;
 
     } catch (err) {
-        console.error("String:",JSONstring)
-        console.error(err)
+        console.error("Invalid JSON string");
+        console.error("String:", JSONstring);
+        console.error(err);
     }
     return (null);
 };
@@ -86,7 +87,14 @@ let inconfig = configfile;
     // merge any defaults with the config file
 
 let config = { ...defaults, ...inconfig };
- config.params = [];
+
+config.useHTTP = false;
+
+// work out if we need to use a HTTP processor
+
+if (config.input.substring(0, 4).toLowerCase() == "http") { config.useHTTP = true;}
+
+config.params = [];
 
     // for each of the parameters found, merge with the defaults
     // process the timestamp option
@@ -119,11 +127,40 @@ for (var idx = 0; idx < cpl; idx++) {
 
 var outputarray = new Array(config.params.length)// param and then items
 
-for (cidx = 0; cidx < config.params.length; cidx++) {outputarray[cidx]=[];}
+for (cidx = 0; cidx < config.params.length; cidx++) { outputarray[cidx] = []; }
 
-const inputjson = getJSON(fs.readFileSync(config.input));
+var request = require('sync-request');
 
-if (inputjson == null) { process.exit(1); }
+//attempt to pull anything back that is valid in terms of a fs recognised locator
+
+if (config.useHTTP) {
+
+    try {
+        var res = request('GET', config.input);
+
+        if (res.statusCode == 200) {
+
+            var inputjson = JSON.parse(res.getBody("utf8"));
+        }
+        else {
+
+        }
+
+    } catch (e) { }
+}
+
+else {
+    const inputjson = getJSON(fs.readFileSync(config.input).toString()); //returns a buffer, so convert to string
+
+}
+
+console.log("UCK");
+if (inputjson == null) {
+    console.error("failed to obtain valid data");
+    process.exit(1);
+}
+
+// now make sure we are accessing the json at the correct level - will needs load more work for complex multi level json data
 
 var jsonarray = inputjson[config.params[0].rootkey];
 

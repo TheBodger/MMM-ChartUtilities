@@ -1,5 +1,5 @@
 {
-  "input": "./covid.json",
+  "input": "https://opendata.ecdc.europa.eu/covid19/casedistribution/json/",
   "params": [
     {
       "rootkey": "records",
