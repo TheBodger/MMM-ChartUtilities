@@ -287,6 +287,22 @@ Parameter|Required|Description|Options|Default
 `value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
 `timestamp`|No|A timestamp to detail when the combined subjects object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
 
+#### Chart Formatter
+
+Will use a NDTF file as input and use rules to create an output that can be used by amchart4
+
+
+
+Parameters:
+
+Parameter|Required|Description|Options|Default
+--------|--------|-----------|-------|-------
+`subject`|Yes|the combined subjects subject identifier|any valid string|none
+`object`|Yes|the combined subjects object defining the relationship identifies|any valid string|none
+`value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
+`timestamp`|No|A timestamp to detail when the combined subjects object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
+
+
 #### JSON splitter
 
 Will split a JSON file into items based on provided keys. File must be compatible with JSON.parse
