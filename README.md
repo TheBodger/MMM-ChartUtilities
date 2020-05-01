@@ -245,17 +245,20 @@ From these examples, it can be seen that it is up to the programmer to determine
 
 #### Set Joiner
 
-Will merge multiple single items that are related at the subject level into a set
+Will merge multiple single items that are related at the subject level into as many sets as there are unique subjects
 
 Parameters:
 
 Variable|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
+`input`|No|The locator of the input JSON|any valid fs supported locator OR if the locator starts with HTTP, then a valid HTTP or HTTPS URL that points at a NDTF format json array|./input.json
 `subject`|Yes|the combined subject identifier|any valid string|none
 `object`|Yes|the combined subject object defining the relationship between the subject and the sets|any valid string|none
-`value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
+`value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of sets
 `timestamp`|No|A timestamp to detail when the combined subject object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
 `rationalise`|No|produce minimal JSON by removing subjects and objects at child levels|true or false|false
+`filename`|No|local file name (no paths) to save a serialised version of the extracted data as an array of sets|any valid filename or not defined for no output. If not defined then the output is displayed to the console|none
+
 
 #### Subject joiner
 

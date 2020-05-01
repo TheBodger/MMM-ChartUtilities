@@ -10,42 +10,16 @@ const moduleruntime = new Date();
 
 // get required scripts
 
-const fs = require("fs");
+
 const moment = require("moment");
 
-// get required structures
+// get required structures and utilities
 
 const structures = require("./structures.js");
+const utilities = require("./common.js");
 
-var getJSON = function (JSONstring) { //check and load a json file
-    try {
-        const JSONObject = JSON.parse(JSONstring);
-
-        return JSONObject;
-
-    } catch (err) {
-        console.error("Invalid JSON string");
-        console.error("String:", JSONstring);
-        console.error(err);
-    }
-    return (null);
-};
-
-var getJSONfile = function (filename) { //check and load a json file
-    //why doesnt this work ??
-     //need to put try catch here or return thee require
-
-    try {
-        const JSONObject = require(filename)
-
-        return JSONObject;
-
-    } catch (err) {
-        console.error("File:", filename)
-        console.error(err)
-    }
-    return (null);
-};
+const JSONutils = new utilities.JSONutils();
+const configutils = new utilities.configutils();
 
     const defaults = {
         input:"./input.json"    // | No | The locator of the input JSON | any valid fs locator | ./input.json
@@ -62,31 +36,9 @@ var getJSONfile = function (filename) { //check and load a json file
         filename: null           // | No | local file name(no paths) to save a serialised version of the extracted data as an array of items | any valid filename or not defined for no output.If not defined then the output is displayed to the console | none
 }
 
-    // get config file
-//and validates it is json at the same time ??
+//------------------------------------------ load and prepare the config --------------------------------
 
-const configfile = getJSONfile("./JSON_splitter.json");
-
-    //validate we can JSON,parse it
-    //check it has at least one params entry
-
-if (configfile == null) { process.exit(1); }
-
-let inconfig = configfile;
-
-    if (inconfig.params == null) {
-        console.error("No parameters found in config file");
-        process.exit(1);
-    }
-
-    if (inconfig.params.length == 0) {
-        console.error("No parameters found in config file");
-        process.exit(1);
-    }
-
-    // merge any defaults with the config file
-
-let config = { ...defaults, ...inconfig };
+let config = configutils.setconfig(defaults);
 
 config.useHTTP = false;
 
@@ -94,16 +46,14 @@ config.useHTTP = false;
 
 if (config.input.substring(0, 4).toLowerCase() == "http") { config.useHTTP = true;}
 
-config.params = [];
-
     // for each of the parameters found, merge with the defaults
     // process the timestamp option
 
-const cpl = inconfig.params.length;
+const cpl = config.params.length;
 
 for (var idx = 0; idx < cpl; idx++) {
 
-    var param = Object.assign({}, paramdefaults, inconfig.params[idx]);
+    var param = Object.assign({}, paramdefaults, config.params[idx]);
 
     param["useruntime"] = false;
     param["usenumericoutput"] = false;
@@ -117,7 +67,7 @@ for (var idx = 0; idx < cpl; idx++) {
 
     }
 
-    config.params.push(param);
+    config.params[idx] = param;
 
 }
 
@@ -129,32 +79,21 @@ var outputarray = new Array(config.params.length)// param and then items
 
 for (cidx = 0; cidx < config.params.length; cidx++) { outputarray[cidx] = []; }
 
-var request = require('sync-request');
-
 //attempt to pull anything back that is valid in terms of a fs recognised locator
+
+var inputjson = ''
 
 if (config.useHTTP) {
 
-    try {
-        var res = request('GET', config.input);
-
-        if (res.statusCode == 200) {
-
-            var inputjson = JSON.parse(res.getBody("utf8"));
-        }
-        else {
-
-        }
-
-    } catch (e) { }
+    inputjson = JSONutils.getJSONURL(config.input);
 }
 
 else {
-    const inputjson = getJSON(fs.readFileSync(config.input).toString()); //returns a buffer, so convert to string
+
+    inputjson = JSONutils.getJSON(fs.readFileSync(config.input).toString()); //returns a buffer, so convert to string
 
 }
 
-console.log("UCK");
 if (inputjson == null) {
     console.error("failed to obtain valid data");
     process.exit(1);
@@ -284,7 +223,7 @@ for (var cidx = 0; cidx < config.params.length; cidx++) {
 
         // write out to a file
 
-        fs.writeFileSync("./" + config.params[cidx].filename, JSON.stringify(outputarray[cidx]));
+        JSONutils.putJSON("./" + config.params[cidx].filename, outputarray[cidx]);
 
         console.info(outputarray[cidx].length);
 
