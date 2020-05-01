@@ -5,7 +5,7 @@ const fs = require("fs");
 
 exports.configutils = function () {
 
-    this.setconfig = function (defaults) {
+    this.setconfig = function (defaults,paramsrequired) {
 
         var modulename = global.process.mainModule.filename.replace(global.process.mainModule.path, "");
 
@@ -18,19 +18,34 @@ exports.configutils = function () {
 
         let inconfig = configfile;
 
-        if (inconfig.params == null) {
-            console.error("No parameters found in config file");
-            process.exit(1);
-        }
+        if (paramsrequired) {
 
-        if (inconfig.params.length == 0) {
-            console.error("No parameters found in config file");
-            process.exit(1);
+            if (inconfig.params == null) {
+                console.error("No parameters found in config file");
+                process.exit(1);
+            }
+
+            if (inconfig.params.length == 0) {
+                console.error("No parameters found in config file");
+                process.exit(1);
+            }
+
         }
 
         // merge any defaults with the config file
 
         var tempconfig = { ...defaults, ...inconfig };
+
+        //add any other common details if a variable is present that would require it
+
+        if (tempconfig.input != null) {
+
+            tempconfig.useHTTP = false;
+
+            // work out if we need to use a HTTP processor
+
+            if (tempconfig.input.substring(0, 4).toLowerCase() == "http") { tempconfig.useHTTP = true; }
+        }
 
         return (tempconfig);
 
@@ -46,7 +61,31 @@ exports.JSONutils = function () {
 
     };
 
-    this.getJSON = function (JSONstring) { //check and load a json string
+    this.getJSON = function (config) {
+
+        var tempJSON = ''
+
+        if (config.useHTTP) {
+
+            tempJSON = this.getJSONURL(config.input);
+        }
+
+        else {
+
+            tempJSON = this.getJSONstring(fs.readFileSync(config.input).toString()); //returns a buffer, so convert to string
+
+        }
+
+        if (tempJSON == null) {
+            console.error("failed to obtain valid data");
+            process.exit(1);
+        }
+
+        return tempJSON;
+
+    };
+
+    this.getJSONstring = function (JSONstring) { //check and load a json string
         try {
             const JSONObject = JSON.parse(JSONstring);
 

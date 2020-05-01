@@ -1,3 +1,5 @@
 {
-  "input": "./coviddeaths.json"
+  "input": "./coviddeaths.json",
+  "rationalise": true,
+  "filename": "./coviddeaths.sets.json"
 }

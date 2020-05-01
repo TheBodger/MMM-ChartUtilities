@@ -8,8 +8,35 @@ exports.NDTFItem = function (subject, object, timestamp, value) {
 	this.timestamp = timestamp;
 	this.value = value;
 
-	this.JSON = function () { //returns a serialised version of the item
+	this.JSONstring = function () { //returns a serialised version of the item
 		return JSON.stringify(this);
+	};
+
+	this.JSONobj = function () { //returns JSON only part of this object (no prototypes etc)
+		return JSON.parse(this.JSONstring());
+	};
+
+}
+
+exports.NDTFSet = function (subject, object, timestamp, value, setid) {
+	this.subject = subject;
+	this.object = object;
+	this.timestamp = timestamp;
+	this.value = value;
+	//this.set = {};
+
+	if (setid != null) { this[setid] = []; }
+
+	this.addset = function (setid) {
+		if (setid != null) { this.set[setid] = []; }
+    }
+
+	this.JSONstring = function () { //returns a serialised version of the item
+		return JSON.stringify(this);
+		};
+
+	this.JSONobj = function () { //returns JSON only part of this object (no prototypes etc)
+		return JSON.parse(this.JSONstring());
 	};
 
 }

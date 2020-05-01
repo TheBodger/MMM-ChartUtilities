@@ -10,7 +10,6 @@ const moduleruntime = new Date();
 
 // get required scripts
 
-
 const moment = require("moment");
 
 // get required structures and utilities
@@ -38,13 +37,7 @@ const configutils = new utilities.configutils();
 
 //------------------------------------------ load and prepare the config --------------------------------
 
-let config = configutils.setconfig(defaults);
-
-config.useHTTP = false;
-
-// work out if we need to use a HTTP processor
-
-if (config.input.substring(0, 4).toLowerCase() == "http") { config.useHTTP = true;}
+let config = configutils.setconfig(defaults,true);
 
     // for each of the parameters found, merge with the defaults
     // process the timestamp option
@@ -81,23 +74,7 @@ for (cidx = 0; cidx < config.params.length; cidx++) { outputarray[cidx] = []; }
 
 //attempt to pull anything back that is valid in terms of a fs recognised locator
 
-var inputjson = ''
-
-if (config.useHTTP) {
-
-    inputjson = JSONutils.getJSONURL(config.input);
-}
-
-else {
-
-    inputjson = JSONutils.getJSON(fs.readFileSync(config.input).toString()); //returns a buffer, so convert to string
-
-}
-
-if (inputjson == null) {
-    console.error("failed to obtain valid data");
-    process.exit(1);
-}
+var inputjson = JSONutils.getJSON(config);
 
 // now make sure we are accessing the json at the correct level - will needs load more work for complex multi level json data
 
