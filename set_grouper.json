@@ -1,0 +1,9 @@
+{
+  "input": "./coviddeaths.json",
+  "setid":"timestamp",
+  "subjectAKA":"Country",
+  "valueAKA":"Deaths",
+  "dropkey":"object",
+  "timestamp_reformat": "YYYY-MM-DD",
+  "filename": "./coviddeaths.groups.json"
+}

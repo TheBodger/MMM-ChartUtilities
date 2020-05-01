@@ -287,9 +287,41 @@ Parameter|Required|Description|Options|Default
 `value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
 `timestamp`|No|A timestamp to detail when the combined subjects object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
 
-#### Chart Formatter
+#### Set Grouper
 
-Will use a NDTF file as input and use rules to create an output that can be used by amchart4
+Will use a NDTF file as input and use rules to create a JSON output that can be used by amchart4
+
+for the following, there is a group by on a formatted timstamp, and then an array of subject and values, with the subject renamed and the value renamed
+
+
+which is similar to the set joiner but for the setid it uses the formatted timestamp and the grouping is at that level and not the subject level.
+
+
+so lets leverage that 
+
+//{
+//    "2003": [
+//        {
+//            "network": "Facebook",
+//            "MAU": 0
+//        },
+//        {
+//            "network": "Flickr",
+//            "MAU": 0
+//        },
+//        {
+//            "network": "Google Buzz",
+//            "MAU": 0
+//        }
+
+
+//    ],
+//        "2004": [
+//            {
+//                "network": "Facebook",
+//                "MAU": 0
+
+//      ....
 
 
 
@@ -297,11 +329,15 @@ Parameters:
 
 Parameter|Required|Description|Options|Default
 --------|--------|-----------|-------|-------
-`subject`|Yes|the combined subjects subject identifier|any valid string|none
-`object`|Yes|the combined subjects object defining the relationship identifies|any valid string|none
-`value`|No|any value to attach to this combination of subjects|any valid JSON value|the number of entries in the set
-`timestamp`|No|A timestamp to detail when the combined subjects object was created, or when it first became valid|any valid timestamp (uses strict moment to validate)|the timestamp of running the module
-
+`input`|No|The locater of the input JSON|any valid fs supported locater OR if the locater starts with HTTP, then a valid HTTP or HTTPS URL that points at a NDTF format json array|./input.json
+`setid`|Yes|the key to use for the setid instead of the default 1,2,3, this key is automatically removed from the child items. if reformatted, then use this instead of raw|any valid key|`subject`
+`groupby`|No|if not null, any items within a set that has the same key values (not the value) processed|`null` or `avg` or `sum`|`null`
+`subjectAKA`|No|rename the subject key to this value|any valid string|`null` - use subject
+`objectAKA`|No|rename the object key to this value|any valid string|`null` - use object
+`valueAKA`|No|rename the value key to this value|any valid string|`null` - use value
+`dropkey`|No|dont include this key|any valid string|`null` - ignore rule
+`timestamp_reformat`|No|reformat the timestamp to this string format|any valid moment string format|`null` - ignore rule
+`filename`|No|local file name (no paths) to save a serialised version of the extracted data as an array of sets|any valid filename or not defined for no output. If not defined then the output is displayed to the console|none
 
 #### JSON splitter
 
