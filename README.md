@@ -26,7 +26,7 @@ To illustrate this, consider a time series graph of all countries death rate by 
 
 In practice, this example can be met with a live capture of current disease  deaths merged with locally held/cached population figures, from one provider, whilst another caches and sends the relevant data for the historical period.
 
-The management of the cached data can be carried out by the provider, such that when it is started it checks for the cached data's relevance and refreshs it accordingly and from that point on uses the cached data only. It is not a neccessity to have caching, as long as all required data can be found in a live source that can be converted to NDTF for consumption.
+The management of the cached data can be carried out by the provider, such that when it is started it checks for the cached data's relevance and refreshs it accordingly and from that point on uses the cached data only. It is not a necessity to have caching, as long as all required data can be found in a live source that can be converted to NDTF for consumption.
 
 ### NDTF - Neils Data Transfer Format.
 
