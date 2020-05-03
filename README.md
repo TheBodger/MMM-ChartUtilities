@@ -22,7 +22,11 @@ Considering the richness of data that may be required, in terms of both breadth 
 
 However, as long as the requisite data is all provided within a single payload, even if further, alter data will be sent, then the aggregator can carry out a merge/formatting process if required. The key principle is that the aggregator must receive the breadth of data required to meet the demands of the display.
 
-to illustrate this, consider a time series graph of all countries death rate by populations from a particular set of diseases. As a minimum the aggregator needs the current death rate and population from a single country of the disease in question. As long as this data is provided in a single payload, then the aggregator can merge/format the data and the display can create a graph. As subsequent countries/time entries arrive, they can be added to the aggregated set and displayed successfully.
+To illustrate this, consider a time series graph of all countries death rate by populations from a particular set of diseases. As a minimum the aggregator needs the current death rate and population from a single country of the disease in question. As long as this data is provided in a single payload, then the aggregator can merge/format the data and the display can create a graph. As subsequent countries/time entries arrive, they can be added to the aggregated set and displayed successfully.
+
+in practice, this example can be met with a live capture of current disease  deaths merged with locally held/cached population figures, from one provider, whilst another caches and sends the relevant data for the historical period.
+
+the management of the cached data can be carried out by the provider, such that when it is started it checks for the cached data's relevance and refreshs it accordingly and from that point on uses the cached data only.
 
 ### NDTF - Neils Data Transfer Format.
 
