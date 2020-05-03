@@ -81,11 +81,11 @@ timestamp = 1980-12-12	// at the end of 1980
 
 As this is a rather inefficient, though very clear, way of expressing information, a final extension is added, that is of **sets**.
 
-The concept of the set allows any particular entry to inherit its subject and object from its parent. the value must always be present along with the timestamp.
+The concept of the set allows any particular entry to inherit information from its parent. This in theory can be any of the 4  data descriptors (Subject, object, Timestamp, value). Normally the value will be present along with the timestamp for observational data, for descriptive data any combinations may be presented (i.e. set{subject=coutries population in year, timestamp=year,array of (object=countryname,value=population)
 
 This enables the creation of the concept of a **combined subject** from one or more individual items for sharing across applications or storing data in more efficient ways when serialised. Any set must be capable of being uncombined back into individual items. 
 
-The set is implemented in JSON as an array, with a unique index identifying each set at the same level within the JSON hierarchy.
+The set is implemented in JSON as an array, with a unique index identifying each set at the same level within the JSON hierarchy. The set identifier will be an increasting value starting at 1, however, enhanced sets may have a setid that represents a subject, object value or timestamp.
 
 #### combined subject and sets
 
@@ -104,7 +104,7 @@ object = population
 	value = 13000000
 	timestamp = 1900
 ```
-an example of a combined subject, note no value or timestamp is present as they aren't mandatory at a parent level
+an example of a combined subject, note no value or timestamp is present at the parent level as they aren't mandatory and hence can be excluded.
 
 ```
 subject = GB
@@ -150,7 +150,7 @@ set:
 
 and as a fully formed multiple combined subject example, held in JSON notation as it should be (not all full timestamps are entered for brevity)
 
-Note that instead of using the Varibale name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new child hierarchy level is spawned, the index starts back at "1" for that particular branch.
+Note that instead of using the Varibale name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new child hierarchy level is spawned, the index starts back at "1" for that particular branch. In an enhanced set, these setids can be replaced any of the 4 descriptors, for example a formatted timestamp. 
 
 ```JSON
 
@@ -253,8 +253,31 @@ Note that instead of using the Varibale name *set*, it is replaced by a relative
 
 *(example1.json)*
 
+#### enhanced set ####
 
-From these examples, it can be seen that it is up to the programmer to determine from the object names how to use the items presented as there is no differentiation between what is a descriptive item and what is an observation. Also the sets of data can contin a mix of information.
+the enhanced set further reduces the data by combining data with a setid that equals one of the four descriptors. This in essence acts as a super parent. The enhanced set is initially designed to replicate data input formats for timeseries graphs. 
+
+definition and Example:
+
+note no information is included at the parent level and the subject is excluded as common accross all children. The consumer will know that the conents meet their requirements aon trust from the provider. At some points additional meta data may be added to the enhanced set.
+
+```JSON
+
+{
+  "timestamp": [
+	    {
+	      "object": "xx",
+	      "value": nn
+	    }
+	]
+}
+
+{ "2003":["country":"GB","Births":2543},"country":"FR","Births":1234}]}
+
+
+#### ----------------------------------------------------------------------------------------------------------
+
+From all these examples, it can be seen that it is up to the programmer to determine from the object names how to use the items presented as there is no differentiation between what is a descriptive item and what is an observation. Also the sets of data can contin a mix of information.
 
 ### Helper code
 
