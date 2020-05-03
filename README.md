@@ -12,6 +12,17 @@ the MMM-ChartDisplay module relies on the AMCharts v4 library with helpers copie
 
 there is an additional MMM-ChartCommon module that needs to be included into the magicmirror as it enables all the common clientside code required by AMCharts
 
+## Principle
+
+The core principle is that the provider must produce information in such a way that the aggregator has everything it needs and it can start passing meaningful information to the display as soon as it receives and aggregates it.
+
+In practice this means that the provider most extract and merge all data required to meet the requirements of the consumer, and the consumer will never need to add to this data, merely format it ready for display.
+
+Considering the richness of data that may be required, in terms of both breadth and depth, that this data will be a mix of live and static, then the provider should make use of previously locally stored data as part of its inputs to the process of creating the data to provide to the consumer.
+
+However, as long as the requisite data is all provided within a single payload, even if further, alter data will be sent, then the aggregator can carry out a merge/formatting process if required. The key principle is that the aggregator must receive the breadth of data required to meet the demands of the display.
+
+to illustrate this, consider a time series graph of all countries death rate by populations from a particular set of diseases. As a minimum the aggregator needs the current death rate and population from a single country of the disease in question. As long as this data is provided in a single payload, then the aggregator can merge/format the data and the display can create a graph. As subsequent countries/time entries arrive, they can be added to the aggregated set and displayed successfully.
 
 ### NDTF - Neils Data Transfer Format.
 
@@ -293,9 +304,8 @@ Will use a NDTF file as input and use rules to create a JSON output that can be 
 
 for the following, there is a group by on a formatted timstamp, and then an array of subject and values, with the subject renamed and the value renamed
 
-
 which is similar to the set joiner but for the setid it uses the formatted timestamp and the grouping is at that level and not the subject level.
-
+and instead of an array of sets we have a list of sets
 
 so lets leverage that 
 
@@ -336,7 +346,11 @@ Parameter|Required|Description|Options|Default
 `objectAKA`|No|rename the object key to this value|any valid string|`null` - use object
 `valueAKA`|No|rename the value key to this value|any valid string|`null` - use value
 `dropkey`|No|dont include this key|any valid string|`null` - ignore rule
+`dropvalues`|No|dont include any item with a value lower than this, ignored if the value key isnt numeric|any valid number|`null` - ignore rule
+`keepsubjects`|No|an array of subject entries to keep|any valid array of strings|`null` - ignore rule
 `timestamp_reformat`|No|reformat the timestamp to this string format|any valid moment string format|`null` - ignore rule
+`timestamp_min`|No|ignore any items older than this timestamp|any valid moment string format|`null` - ignore rule
+
 `filename`|No|local file name (no paths) to save a serialised version of the extracted data as an array of sets|any valid filename or not defined for no output. If not defined then the output is displayed to the console|none
 
 #### JSON splitter

@@ -10,7 +10,7 @@
     },
     {
       "rootkey": "records",
-      "subject": "geoId",
+      "subject": "countriesAndTerritories",
       "object": "coviddeaths",
       "value": "deaths",
       "type": "numeric",

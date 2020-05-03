@@ -65,6 +65,9 @@ exports.JSONutils = function () {
 
         var tempJSON = ''
 
+
+        console.error(`Current directory: ${process.cwd()}`);
+
         if (config.useHTTP) {
 
             tempJSON = this.getJSONURL(config.input);

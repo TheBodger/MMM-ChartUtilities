@@ -21,7 +21,10 @@ const defaults = {
     objectAKA: null,            // | No | rename the object key to this value | any valid string | `null` - use object
     valueAKA: null,             // | No | rename the value key to this value | any valid string | `null` - use value
     dropkey: null,              // | No | exclude this key | any valid string | `null` - use value
+    dropvalues: null,           // | No | dont include any item with a value lower than this, ignored if the value key isnt numeric | any valid number | `null` - ignore rule
+    keepsubjects: null,          // | No | an array of subject entries to keep | any valid array of strings | `null` - ignore rule
     timestamp_reformat: null,   // | No | A timestamp to detail when the combined subject object was created, or when it first became valid | any valid timestamp(uses strict moment to validate) | the timestamp of running the module
+    timestamp_min:null,         // | No | ignore any items older than this timestamp | any valid moment string format | `null` - ignore rule
     filename: null,             // | No | local file name(no paths) to save a serialised version of the extracted data as an array of items | any valid filename or not defined for no output.If not defined then the output is displayed to the console | none
     groupby: null               // | if not null, any items within a set that has the same key values (not the value) processed|`null` or `avg` or `sum`|`null`
 }
@@ -51,6 +54,7 @@ var setidarray = []; // contains all the setids, after formatting
 var setarray = [];
 var prevsetid = null;
 var currentidx = -1;
+var setstructure = {};
 
 for (itemidx = 0; itemidx < inputjson.length; itemidx++) {
 
@@ -63,8 +67,16 @@ for (itemidx = 0; itemidx < inputjson.length; itemidx++) {
 
     //start building the output as soon as possible, using hand built stuff
 
-    if (config.timestamp_reformat != null) { timestamp = moment(timestamp).format(config.timestamp_reformat); } else { timestamp = moment(timestamp); }
+    item['orig_timestamp'] = timestamp;
 
+    if (config.timestamp_reformat != null) {
+        timestamp = moment(timestamp).format(config.timestamp_reformat);
+    } else {
+        timestamp = moment(timestamp);
+    }
+
+
+    // "keepsubjects": [ "BR","CA","ES","FR","IN","IR","IT","MX","NL","PE","RU","SE","TR","UK","US","BE" ],
     item['timestamp'] = timestamp;
 
     var subjectname = 'subject';
@@ -83,44 +95,36 @@ for (itemidx = 0; itemidx < inputjson.length; itemidx++) {
 
     var setid = item[config.setid]; //build the setid after all rules have been applied
 
-    delete item[config.setid]; //remove the setid from the item
+    var pushitem = true;
 
-    if (setid != prevsetid) {
-
-  // change of subject so see if we are processing it otherwise create a new one
-  // gets all the correct indexes for the push below
-
-        prevsetid = setid;
-
-        var setidfound = false;
-
-        for (var sidx = 0; sidx < setidarray.length; sidx++) {
-
-      //get index from setid array 
-
-            if (setidarray[sidx] == setid) {
-        setidfound = true;
-        currentidx = sidx;
-        break;
-      }
-
+    if (config.keepsubjects != null) {
+        if (config.keepsubjects.indexOf(subject) == -1) { pushitem = false;}
     }
 
-        if (!setidfound) {
+    if (config.timestamp_min != null) {
 
-            var setstructure = {};
-            setstructure[setid] = [];
-      
-      setarray.push(setstructure);
-      setidarray.push(setid);
-      currentidx = setarray.length - 1;
-
+        if (moment(item.orig_timestamp) < moment(config.timestamp_min)) {
+            pushitem = false;
+        }
     }
 
-  }
+    if (setstructure[setid]== null && pushitem) { //dont send anything if this item is excluded by dates
 
-  setarray[currentidx][setidarray[currentidx]].push(item);
+        setstructure[setid] = [];
+        setidarray.push(setid);
+    }
 
+    if (config.dropvalues != null) {
+        if (!isNaN(parseFloat(item[valuename]))){
+            if (config.dropvalues > parseFloat(item[valuename]) ) { pushitem = false;}
+        }
+    }
+
+    if (pushitem) {
+        delete item[config.setid]; //remove the setid from the item
+        delete item['orig_timestamp'];
+        setstructure[setid].push(item);
+    }
 }
 
 // if we need to carry out a group by, we now go back through all the sets, merging identical items in each set, using the group by type,
@@ -128,28 +132,26 @@ for (itemidx = 0; itemidx < inputjson.length; itemidx++) {
 if (config.groupby != null) {
     //`groupby`|No|if not null, any items within a set that has the same key values (not the value) processed|`null` or `avg` or `sum`|`null`
 
-    for (var sidx = 0; sidx < setarray.length; sidx++) {
-        for (var iidx = 0; iidx < setarray[setidarray[setidx]].length; iidx++) {
+    //for each list item, look at all the array items
 
             //average or sum the value fields - use the renamed / reformatted key names
 
-        }
-    }
+
 
 }
 
 //now determine what to do next
 
   if (config.filename == null) {
-    console.info(setarray);
+      console.info(setstructure);
   }
   else {
 
     // write out to a file
 
-    JSONutils.putJSON("./" + config.filename, setarray);
+      JSONutils.putJSON("./" + config.filename, setstructure);
 
-    console.info(setarray.length);
+      console.info(setstructure.length);
 
   }
 
