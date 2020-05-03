@@ -14,17 +14,17 @@ there is an additional MMM-ChartCommon module that needs to be included into the
 
 ## Principle
 
-The core principle is that the provider must produce information in such a way that the aggregator has everything it needs and it can start passing meaningful information to the display as soon as it receives and aggregates it.
+The core principle is that the provider must produce information in such a way that the aggregator has everything it needs and it can start passing meaningful information to the display as soon as it receives and aggregates it. 
 
-In practice this means that the provider most extract and merge all data required to meet the requirements of the consumer, and the consumer will never need to add to this data, merely format it ready for display.
+In practice this means that the provider most extract and merge all data required to meet the requirements of the consumer, and the consumer will never need to add to this data, merely format it ready for display as each set of data arrives from the provider.
 
-Considering the richness of data that may be required, in terms of both breadth and depth, that this data will be a mix of live and static, then the provider should make use of previously locally stored data as part of its inputs to the process of creating the data to provide to the consumer.
+Considering the richness of data that may be required, in terms of both breadth and depth and that this data will be a mix of live and static, then the provider should make use of previously locally stored data as part of its inputs to the process of creating the data to provide to the consumer.
 
-However, as long as the requisite data is all provided within a single payload, even if further data will be sent later, then the aggregator can carry out a merge/formatting process if required. The key principle is that the aggregator must receive the breadth of data required to meet the demands of the display.
+However, as long as the requisite data is all provided within a single payload, even if further data will be sent later, then the aggregator can carry out a merge/formatting process if required. __The key principle is that the aggregator must receive the breadth of data required to meet the demands of the display.__
 
-To illustrate this, consider a time series graph of all countries death rate by populations from a particular set of diseases. As a minimum the aggregator needs the current death rate and population from a single country of the disease in question. As long as this data is provided in a single payload, then the aggregator can merge/format the data and the display can create a graph. As subsequent countries/time entries arrive, they can be added to the aggregated set and displayed successfully.
+To illustrate this, consider a time series graph of all countrie's death rate by populations from a particular set of diseases. As a minimum the aggregator needs the current death rate and population from a single country of one of the diseases in question. As long as this data is provided in a single payload, then the aggregator can merge/format the data and the display can create a graph. As subsequent countries/diseases/time entries arrive, they can be added to the aggregated set and displayed successfully.
 
-In practice, this example can be met with a live capture of current disease  deaths merged with locally held/cached population figures, from one provider, whilst another caches and sends the relevant data for the historical period.
+In practice, this example can be met with a live capture of current disease deaths merged with locally held/cached population figures, from one provider, whilst another caches and sends the relevant data for the historical period.
 
 The management of the cached data can be carried out by the provider, such that when it is started it checks for the cached data's relevance and refreshs it accordingly and from that point on uses the cached data only. It is not a necessity to have caching, as long as all required data can be found in a live source that can be converted to NDTF for consumption.
 
