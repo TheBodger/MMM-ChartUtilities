@@ -65,9 +65,6 @@ exports.JSONutils = function () {
 
         var tempJSON = ''
 
-
-        console.error(`Current directory: ${process.cwd()}`);
-
         if (config.useHTTP) {
 
             tempJSON = this.getJSONURL(config.input);
@@ -127,6 +124,24 @@ exports.JSONutils = function () {
         return _getJSONfile(filename);
 
     };
+
+}
+
+exports.getkeyedJSON = function (jsonobject, dotdelimitedkeys) {
+
+    //split the dotdelimitedkeys into key names
+
+    var keynames = dotdelimitedkeys.split(".");
+
+    var tempJSONobj = jsonobject[keynames[0]];
+
+    for (var kidx = 1; kidx < keynames.length; kidx++) {
+
+        tempJSONobj = tempJSONobj[keynames[kidx]];
+
+    }
+
+    return tempJSONobj;
 
 }
 
