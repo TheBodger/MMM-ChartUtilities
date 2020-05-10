@@ -1,6 +1,13 @@
 # MMM-ChartUtilities
 Helper and definitions for the MMM-Chartxxx interrelated modules
 
+There are a common utilities and structures installed with this module that are required by other MMM-Chart.... modules.
+
+There are included scripts that can be used to install all MMM-Chart.... modules and dependencies.
+
+The MMM-Chart.... modules also require that the common modules and structures in the MMM-FeedUtilies module are installed.
+
+
 
 The Chart modules are based on the Feed interrelated modules and much of the design is common (most of the code is copied!!)
 
@@ -10,33 +17,33 @@ the data transfer format is loosely based on Resource Description Framework (RDF
 
 the MMM-ChartDisplay module relies on the AMCharts v4 library with helpers copied and further developed to enable it's usage within nodejs and MagicMirror
 
-there is an additional MMM-ChartCommon module that needs to be included into the magicmirror as it enables all the common clientside code required by AMCharts
-
 ## Principle
 
 The core principle is that the provider must produce information in such a way that the aggregator has everything it needs and it can start passing meaningful information to the display as soon as it receives and aggregates it. 
 
-In practice this means that the provider most extract and merge all data required to meet the requirements of the consumer, and the consumer will never need to add to this data, merely format it ready for display as each set of data arrives from the provider.
+In practice this means that the provider most extract and merge all data required to meet the requirements of the consumer, and the consumer will never need to add to this data, merely format it ready for display as each set of data arrives from the provider. (this principle has been ehnaced with the introduction of reference data. See the MMM-ChartDisplay module for more details)
 
-Considering the richness of data that may be required, in terms of both breadth and depth and that this data will be a mix of live and static, then the provider should make use of previously locally stored data as part of its inputs to the process of creating the data to provide to the consumer.
+Considering the richness of data that may be required, in terms of both breadth and depth and that this data will be a mix of live and static, then the provider may make use of previously locally stored data as part of its inputs to the process of creating the data to provide to the consumer. (See above about reference data)
 
 However, as long as the requisite data is all provided within a single payload, even if further data will be sent later, then the aggregator can carry out a merge/formatting process if required. __The key principle is that the aggregator must receive the breadth of data required to meet the demands of the display.__
 
-To illustrate this, consider a time series graph of all countrie's death rate by populations from a particular set of diseases. As a minimum the aggregator needs the current death rate and population from a single country of one of the diseases in question. As long as this data is provided in a single payload, then the aggregator can merge/format the data and the display can create a graph. As subsequent countries/diseases/time entries arrive, they can be added to the aggregated set and displayed successfully.
+To illustrate this, consider a time series graph of all countrie's death rate by populations from a particular set of diseases. As a minimum the aggregator needs the current death rate of one disease and population from a single country in question. As long as this data is provided in a single payload, then the aggregator can merge/format the data and the display can create a graph. As subsequent countries/diseases/time entries arrive, they can be added to the aggregated set and displayed successfully.
 
-In practice, this example can be met with a live capture of current disease deaths merged with locally held/cached population figures, from one provider, whilst another caches and sends the relevant data for the historical period.
+In practice, this example can be met with a live capture of current disease deaths merged with locally held/cached population figures, from one provider, whilst another caches and sends the relevant data for the historical period, or reference data is used if relevant.
+
+__TODO - note, the merging of data has not yet been included within the Chart modules__
 
 The management of the cached data can be carried out by the provider, such that when it is started it checks for the cached data's relevance and refreshs it accordingly and from that point on uses the cached data only. It is not a necessity to have caching, as long as all required data can be found in a live source that can be converted to NDTF for consumption.
 
 ### NDTF - Neils Data Transfer Format.
 
-#### base schema: see notes below on extracts on RDF
+#### base schema: see notes below and extracts on RDF
 
 ```
 Subject: The what, as expressed as a code that can be further expanded if required
 Object: The predicate (i use object here instead of predicate - see below how the color example would be expressed
-Time stamp: when the information is "valid" from
-Value: The object or literal linked to the subject in this triple
+Time stamp: when the information is "valid" from/at
+Value: The actual value linked to the subject in this triple
 ```
 
 So for the example we would have:
@@ -55,13 +62,13 @@ value = green
 time stamp = the first time someone worked this out
 ```
 
-to extend the schema, there are two types of information, **observations** and **descriptions**.
+to extend the schema, there are two types of vitual information, **observations** and **descriptions**.
 
 a description enhances a subject with further details and an observation is a specific value captured about a subject.
 
 i.e.
 
-#### description
+#### description / may also be considered a reference data subject
 
 ```
 subject = GB			// a keyed value
@@ -70,7 +77,7 @@ value = GreatBritain	// the value
 timestamp = 1970-01-01	// since forever
 ```
 
-#### observation
+#### observation / something that will change and may require refreshing periodically to ensure the latest state is captured
 
 ```
 subject = GB			// a keyed value
@@ -80,6 +87,8 @@ timestamp = 1980-12-12	// at the end of 1980
 ```
 
 As this is a rather inefficient, though very clear, way of expressing information, a final extension is added, that is of **sets**.
+
+__Note: some of the principles of SETS in this context have been implemented within the ChartDisplay module and then passed to the charts so as to provide the information the chart requires. Hence they are only transitionary and not visible nor storable__
 
 The concept of the set allows any particular entry to inherit information from its parent. This in theory can be any of the 4  data descriptors (Subject, object, Timestamp, value). Normally the value will be present along with the timestamp for observational data, for descriptive data any combinations may be presented (i.e. set{subject=coutries population in year, timestamp=year,array of (object=countryname,value=population)
 
@@ -150,7 +159,7 @@ set:
 
 and as a fully formed multiple combined subject example, held in JSON notation as it should be (not all full timestamps are entered for brevity)
 
-Note that instead of using the Varibale name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new child hierarchy level is spawned, the index starts back at "1" for that particular branch. In an enhanced set, these setids can be replaced any of the 4 descriptors, for example a formatted timestamp. 
+Note that instead of using the Varibale name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new child hierarchy level is spawned, the index starts back at "1" for that particular branch. In an enhanced set, these setids can be replaced any of the 4 descriptors, for example a formatted timestamp. THe sets may also be keyed on a subject or date for example, in this case it would probably be the country name or ISO standard abbreviation.
 
 ```JSON
 
@@ -259,7 +268,7 @@ the enhanced set further reduces the data by combining data with a setid that eq
 
 definition and Example:
 
-note no information is included at the parent level and the subject is excluded as common accross all children. The consumer will know that the conents meet their requirements aon trust from the provider. At some points additional meta data may be added to the enhanced set.
+note no information is included at the parent level and the subject is excluded as common across all children. The consumer will know that the contents meet their requirements on trust from the provider. At some point in the future additional meta data may be added to the enhanced set.
 
 ```JSON
 
@@ -277,9 +286,9 @@ note no information is included at the parent level and the subject is excluded 
 
 #### ----------------------------------------------------------------------------------------------------------
 
-From all these examples, it can be seen that it is up to the programmer to determine from the object names how to use the items presented as there is no differentiation between what is a descriptive item and what is an observation. Also the sets of data can contin a mix of information.
+From all these examples, it can be seen that it is up to the user to determine from the object names how to use the items presented as there is no differentiation between what is a descriptive item and what is an observation. Also the sets of data can contain a mix of information.
 
-### Helper code
+### Helper code that can be run in node.js, not fully tested and not always complete. Most has been copied into the MMM-ChartDisplay module to enable the creation of chart compatible sets.
 
 #### Set Joiner
 
@@ -401,12 +410,12 @@ Parameter|Required|Description|Options|Default
 `timestampformat`|No|a moment compatible timestamp format used to validate any dates found|timestamp string|None - dont use any format
 `filename`|No|local file name (no paths) to save a serialised version of the extracted data as an array of items|any valid filename or not defined for no output. If not defined then the output is displayed to the console|none
 
-how to handle variable named keys where the key name is the subject ?
-how to determine if there is something we can extract to determine time zone
-how to pass a timezone through config so times are corrected for UTC
 
-need to ensure there is always an object at the parent level when we output
-
+Things TODO:
+1, how to handle variable named keys where the key name is the subject ?
+2, how to determine if there is something we can extract to determine time zone
+3, how to pass a timezone through config so times are corrected for UTC
+4, need to ensure there is always an object at the parent level when we output
 
 ### Structures
 
@@ -415,7 +424,7 @@ need to ensure there is always an object at the parent level when we output
 {
 "subject": "",
 "object": "",
-"timestamp": "", //created from a new Date(timestamp), where timestamp has been validated by moment
+"timestamp": "", //created from a new Date(timestamp), where timestamp has been validated by moment OR a standard UNIX numeric timestamp
 "value": "" // can be string or numeric
 }
 
