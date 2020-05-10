@@ -78,7 +78,6 @@ exports.JSONutils = function () {
 
         if (tempJSON == null) {
             console.error("failed to obtain valid data");
-            process.exit(1);
         }
 
         return tempJSON;
@@ -107,6 +106,49 @@ exports.JSONutils = function () {
             if (res.statusCode == 200) {
 
                 return JSON.parse(res.getBody("utf8"));
+            }
+            else {
+                return null;
+            }
+
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+
+    };
+
+    this.getTEXT = function (config) {
+
+        var tempTEXT = ''
+
+        if (config.useHTTP) {
+
+            tempTEXT = this.getTEXTURL(config.input);
+        }
+
+        else {
+
+            tempTEXT = fs.readFileSync(config.input).toString(); //returns a buffer, so convert to string
+
+        }
+
+        if (tempTEXT == null) {
+            console.error("failed to obtain valid data");
+        }
+
+        return tempTEXT;
+
+    };
+
+    this.getTEXTURL = function (url) { //load text from url
+
+        try {
+            var res = request('GET', url);
+
+            if (res.statusCode == 200) {
+
+                return res.getBody("utf8"); // TODO will need to drop html somewhere 
             }
             else {
                 return null;

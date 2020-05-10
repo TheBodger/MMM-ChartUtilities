@@ -7,7 +7,31 @@ There are included scripts that can be used to install all MMM-Chart.... modules
 
 The MMM-Chart.... modules also require that the common modules and structures in the MMM-FeedUtilies module are installed.
 
+### Installation
 
+### Installation
+To install the module, use your bash terminal to:
+1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
+2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-ChartUtilities`
+3. To install all the other MMM-Chart.... modules, and their nodejs dependencies into the root of magicmirror (reduces disk usage) <BR />`cd MMM-ChartUtilities`<BR />(if on a unix device) `sudo chmod +x install.sh`<BR />`./install.sh`
+
+
+### Included Helpers and structures.
+
+#### common.js
+
+##### JSONutils
+
+putJSON - writes a JSON object to a file -see the MMM-ChartProvider modules for examples of usage
+getJSON - reads and returns a validated JSON object from a URL or local file - see the MMM-ChartProvider-JSON module for examples of usage
+getTEXT - reads and returns a text string from a URL or local file - see the MMM-ChartProvider-Words module for examples of usage
+
+####structures.js
+
+NDTFItem - can be used as a template for a new NDTF item -see the MMM-ChartProvider modules for examples of usage
+NDTFSet - can be used as a template for a new NDTF set of items
+
+### Overview of Chart modules, providers and consumers
 
 The Chart modules are based on the Feed interrelated modules and much of the design is common (most of the code is copied!!)
 
