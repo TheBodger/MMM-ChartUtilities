@@ -91,7 +91,7 @@ exports.JSONutils = function () {
     this.getJSONnew = function (JSONconfig) { // a config that may or may not be for a json pull
 
         //uses either http, https or fs to get data and process it through the callback.
-        //because of the variosu reed options, the config is passed deeper and deeper, hopefully returning at some point still intact
+        //because of the various read options, the config is passed deeper and deeper, hopefully returning at some point still intact
 
         if (JSONconfig.config.useHTTP) { // HTTP or HTTPS
 
@@ -100,18 +100,19 @@ exports.JSONutils = function () {
 
         else {
 
-            this.getTEXTURLnew(JSONconfig);
+            this.getJSONfilenew(JSONconfig);
 
         }
 
     };
 
-    this.getTEXTURLnew = function (JSONconfig) {
+    this.getJSONfilenew = function (JSONconfig) {
 
         tempJSON = this.getJSONstring(fs.readFileSync(JSONconfig.config.input).toString()); //returns a buffer, so convert to string
 
-    };
+        JSONconfig.callback(JSONconfig, tempJSON)
 
+    };
 
     this.getJSONstring = function (JSONstring) { //check and load a json string
         try {
@@ -193,6 +194,56 @@ exports.JSONutils = function () {
             console.error(err);
             return null;
         }
+
+    };
+
+    this.getTEXTnew = function (JSONconfig) { // a config that may or may not be for a json pull
+
+        //uses either http, https or fs to get data and process it through the callback.
+        //because of the various read options, the config is passed deeper and deeper, hopefully returning at some point still intact
+
+        if (JSONconfig.config.useHTTP) { // HTTP or HTTPS
+
+            this.getTEXTURLnew(JSONconfig);
+        }
+
+        else {
+
+            this.getTEXTfilenew(JSONconfig);
+
+        }
+
+    };
+
+    this.getTEXTURLnew = function (JSONconfig) { //load text from url
+
+        var TEXTbody = '';
+
+        const req = HTTPS.request(JSONconfig.options, (res) => {
+            console.log('statusCode:', res.statusCode);
+            console.log('headers:', res.headers);
+
+            res.on('data', (data) => {
+                TEXTbody = TEXTbody + data.toString();
+            });
+            res.on('end', () => {
+                JSONconfig.callback(JSONconfig, TEXTbody);
+            });
+        });
+
+        req.on('error', (e) => {
+            console.error(e);
+        });
+
+        req.end();
+
+    };
+
+    this.getTEXTfilenew = function (JSONconfig) {
+
+        tempTEXT = fs.readFileSync(JSONconfig.config.input).toString(); //returns a buffer, so convert to string
+
+        JSONconfig.callback(JSONconfig, tempTEXT)
 
     };
 
