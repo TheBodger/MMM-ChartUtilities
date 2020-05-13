@@ -133,8 +133,8 @@ exports.JSONutils = function () {
         var JSONbody = '';
 
         const req = HTTPS.request(JSONconfig.options, (res) => {
-            console.log('statusCode:', res.statusCode);
-            console.log('headers:', res.headers);
+            //console.log('statusCode:', res.statusCode);
+            //console.log('headers:', res.headers);
 
             res.on('data', (data) => {
                 //process.stdout.write(d);
@@ -220,8 +220,8 @@ exports.JSONutils = function () {
         var TEXTbody = '';
 
         const req = HTTPS.request(JSONconfig.options, (res) => {
-            console.log('statusCode:', res.statusCode);
-            console.log('headers:', res.headers);
+            //console.log('statusCode:', res.statusCode);
+            //console.log('headers:', res.headers);
 
             res.on('data', (data) => {
                 TEXTbody = TEXTbody + data.toString();

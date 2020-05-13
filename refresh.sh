@@ -1,5 +1,4 @@
-#install all the chart repositories assuming they have not been installed
-#must start in modules
+#refresh all the chart repositories assuming they have been installed
 
 #dont forget the chmod +x run this in unix bash land
 
@@ -7,18 +6,25 @@
 cd ../
 
 #
-git clone https://github.com/TheBodger/MMM-ChartDisplay
-
-git clone https://github.com/TheBodger/MMM-ChartProvider-JSON
-git clone https://github.com/TheBodger/MMM-ChartProvider-Words
-git clone https://github.com/TheBodger/MMM-ChartProvider-Finance
+cd MMM-ChartDisplay
+git pull
+cd ..
+MMM-ChartProvider-JSON
+git pull
+cd ..
+MMM-ChartProvider-Words
+git pull
+cd ..
+MMM-ChartProvider-Finance
+git pull
+cd ..
 
 #go back to mm root
 #should be at /Magicmirror now
 
 cd ../
 
-#install all the dependencies here so we dont create humongous directories of copies of npm modules
+#re-install all the dependencies here so we dont create humongous directories of copies of npm modules
 
 # we dont install moment as it is already present by default in MM
 # we dont install fs as it is part of core node-js apparently. On windows you may need to install it 
