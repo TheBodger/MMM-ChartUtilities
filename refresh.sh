@@ -8,16 +8,16 @@ cd ../
 #
 cd MMM-ChartDisplay
 git pull
-cd ..
+cd ../
 MMM-ChartProvider-JSON
 git pull
-cd ..
+cd ../
 MMM-ChartProvider-Words
 git pull
-cd ..
+cd ../
 MMM-ChartProvider-Finance
 git pull
-cd ..
+cd ../
 
 #go back to mm root
 #should be at /Magicmirror now
