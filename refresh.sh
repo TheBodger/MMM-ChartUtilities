@@ -1,4 +1,5 @@
 #refresh all the chart repositories assuming they have been installed
+#will force overwrite any changes in the repository locally of tracked files.
 
 #dont forget the chmod +x run this in unix bash land
 
@@ -7,15 +8,23 @@ cd ../
 
 #
 cd MMM-ChartDisplay
+git fetch
+git reset --hard
 git pull
 cd ../
 MMM-ChartProvider-JSON
+git fetch
+git reset --hard
 git pull
 cd ../
 MMM-ChartProvider-Words
+git fetch
+git reset --hard
 git pull
 cd ../
 MMM-ChartProvider-Finance
+git fetch
+git reset --hard
 git pull
 cd ../
 
