@@ -42,6 +42,6 @@ npm install linq
 
 #Special install of require.js to support amcharts. Under the vendor directory as the MMM-ChartDisplay module needs to know where it is
 
-cd ../vendor
+cd /vendor
 
 npm install requirejs
