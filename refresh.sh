@@ -12,17 +12,17 @@ git fetch
 git reset --hard
 git pull
 cd ../
-MMM-ChartProvider-JSON
+cd MMM-ChartProvider-JSON
 git fetch
 git reset --hard
 git pull
 cd ../
-MMM-ChartProvider-Words
+cd MMM-ChartProvider-Words
 git fetch
 git reset --hard
 git pull
 cd ../
-MMM-ChartProvider-Finance
+cd MMM-ChartProvider-Finance
 git fetch
 git reset --hard
 git pull
