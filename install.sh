@@ -30,3 +30,4 @@ npm install linq
 cd ../vendor
 
 npm install requirejs
+npm install memfs
