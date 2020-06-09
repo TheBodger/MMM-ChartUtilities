@@ -1,7 +1,13 @@
 // JavaScript source code
 
-const request = require('sync-request');
+//common utilities V2.0, use HTPPand HTTPS instead of sync-request becaseu that kills electron on the pi
+
+//const request = require('sync-request');
 const fs = require("fs");
+const ms = require('memfs');
+
+const HTTP = require("http");
+const HTTPS = require("https");
 
 exports.configutils = function () {
 
@@ -84,6 +90,32 @@ exports.JSONutils = function () {
 
     };
 
+    this.getJSONnew = function (JSONconfig) { // a config that may or may not be for a json pull
+
+        //uses either http, https or fs to get data and process it through the callback.
+        //because of the various read options, the config is passed deeper and deeper, hopefully returning at some point still intact
+
+        if (JSONconfig.config.useHTTP) { // HTTP or HTTPS
+
+            this.getJSONURLnew(JSONconfig);
+        }
+
+        else {
+
+            this.getJSONfilenew(JSONconfig);
+
+        }
+
+    };
+
+    this.getJSONfilenew = function (JSONconfig) {
+
+        tempJSON = this.getJSONstring(fs.readFileSync(JSONconfig.config.input).toString()); //returns a buffer, so convert to string
+
+        JSONconfig.callback(JSONconfig, tempJSON)
+
+    };
+
     this.getJSONstring = function (JSONstring) { //check and load a json string
         try {
             const JSONObject = JSON.parse(JSONstring);
@@ -98,23 +130,29 @@ exports.JSONutils = function () {
         return (null);
     };
 
-    this.getJSONURL = function (url) { //check and load json from url
+    this.getJSONURLnew = function (JSONconfig) { //check and load json from url
 
-        try {
-            var res = request('GET', url);
+        var JSONbody = '';
 
-            if (res.statusCode == 200) {
+        const req = HTTPS.request(JSONconfig.options, (res) => {
+            //console.log('statusCode:', res.statusCode);
+            //console.log('headers:', res.headers);
 
-                return JSON.parse(res.getBody("utf8"));
-            }
-            else {
-                return null;
-            }
+            res.on('data', (data) => {
+                //process.stdout.write(d);
+                //console.log(data.toString());
+                JSONbody = JSONbody + data.toString();
+            });
+            res.on('end', () => {
+                JSONconfig.callback(JSONconfig, JSON.parse(JSONbody));
+            });
+        });
 
-        } catch (err) {
-            console.error(err);
-            return null;
-        }
+        req.on('error', (e) => {
+            console.error(e);
+        });
+
+        req.end();
 
     };
 
@@ -161,6 +199,56 @@ exports.JSONutils = function () {
 
     };
 
+    this.getTEXTnew = function (JSONconfig) { // a config that may or may not be for a json pull
+
+        //uses either http, https or fs to get data and process it through the callback.
+        //because of the various read options, the config is passed deeper and deeper, hopefully returning at some point still intact
+
+        if (JSONconfig.config.useHTTP) { // HTTP or HTTPS
+
+            this.getTEXTURLnew(JSONconfig);
+        }
+
+        else {
+
+            this.getTEXTfilenew(JSONconfig);
+
+        }
+
+    };
+
+    this.getTEXTURLnew = function (JSONconfig) { //load text from url
+
+        var TEXTbody = '';
+
+        const req = HTTPS.request(JSONconfig.options, (res) => {
+            //console.log('statusCode:', res.statusCode);
+            //console.log('headers:', res.headers);
+
+            res.on('data', (data) => {
+                TEXTbody = TEXTbody + data.toString();
+            });
+            res.on('end', () => {
+                JSONconfig.callback(JSONconfig, TEXTbody);
+            });
+        });
+
+        req.on('error', (e) => {
+            console.error(e);
+        });
+
+        req.end();
+
+    };
+
+    this.getTEXTfilenew = function (JSONconfig) {
+
+        tempTEXT = fs.readFileSync(JSONconfig.config.input).toString(); //returns a buffer, so convert to string
+
+        JSONconfig.callback(JSONconfig, tempTEXT)
+
+    };
+
     this.getJSONfile = function (filename) { //check and load a json file
 
         return _getJSONfile(filename);
@@ -186,6 +274,307 @@ exports.getkeyedJSON = function (jsonobject, dotdelimitedkeys) {
     return tempJSONobj;
 
 }
+
+exports.mergeutils = function () {
+
+    //default is 
+    //  to merge all sets using subject as the key and then use the keyset(1st setid) to drive a < = > merge with all other sets
+    //  no sort
+    //  in memory using fsmem (memfs)
+    //
+    //  if there is a sort, there may be sort on multiple keys, so we can do multiple key matching
+    //  i.e. stock then date
+    //
+    //  sort date within stock
+    //
+    //  main match is on stock, if stocks equal then process dates
+    //  if key stock is less than all other stocks, then we have finised this stock and move onto next stock
+    //  if key stock matches an other stock then check at dates level and determine < = >
+    //
+    //  matching occurs at lowest level, unless 1st level, then the data gets stored as new entries in the array
+    //  change of higher level keys means that a new entry is created at the setid level
+    //
+    //
+
+
+    var _storedsetids = [];
+    var _setkeys = {};
+    var _keyset;                //store the first matchkey setid or if blank, the first set passed for storage regardless
+    var _path = '';
+    var _fs = fs;
+    var _presort;
+    var _casesensitive;
+    var _matchkeys = [];
+
+    
+    this.init = function (config) {
+
+        //config is the merge part of the overall confg
+
+        //
+//				merge {
+//					fileprocess: true/false					// if true will serialise all the data to disk and use file processing instead of in memory prior to building the ouput
+//					input: [setids]							// list of the setids to monitor/store/process
+//					sort: true/false						// use the matchkeys to sort each setid
+//					casesensitive:true/false				//sorting and matching is sensitive/insensitive to case
+        //					matchkeys: [setid.key, setid.key,..]	// multiple key levels matching from left to right
+//															// key is the AKA name of a field, the first one will provide the setid.key in the output
+//															// the first key is king and everything must match that record by record or get discarded
+//					output: [setid.field,setid.field,setid.field,..] // will produce a [setid.key:{setid.filed,etc,etc}]
+//															// if left blank will copy over any field not present already in the ouput from the setid key/values
+//					
+
+        if (config.fileprocess) {
+            _fs = ms;
+            _path = '/';
+        }
+
+        _presort = config.sort;
+        _casesensitive = config.casesensitive;
+        _matchkeys = config.matchkeys;
+
+        //setup the default sortkey
+
+        if (_matchkeys == null)             { _matchkeys.push('subject'); } //add subject as the default key
+        else if (_matchkeys.length == 0)    { _matchkeys.push('subject');} //add subject as the default key
+        else if (_keyset == null) {
+            _keyset = _matchkeys[0].split(".")[0];//get the keyset from the first key in matchkeys setid.key
+            for (var idx = 0; idx < _matchkeys.length; idx++) {
+                _matchkeys[idx] = _matchkeys[idx].split(".")[1]; //remove the setid as we have stored it
+            }
+        } 
+    }
+
+    this.mergesets = function () {
+
+        //todo - add option to choose the key set and not just use default of the first one
+
+        var _mergesets = {};
+        var _mergedsets = {};
+        var _mergekeyvalues = {};
+        var _mergesetindexes = {};
+        var _maxkeyvalue;
+        var _processedsetcount = 0;
+        var _output = {};
+
+        //recall all setids stored, use the 1st set to drive, all will be loaded back into set format
+        //and preload the current key
+
+        for (var _setid in _storedsetids) {
+
+            _mergesets[_setid] = this.recallset(_setid);
+            _mergekeyvalues[_setid] = _mergesets[_setid][0][_setkeys[_setid]] //should return the setkey of the first entry in a set of array
+            _mergesetindexes[_setid] = 0;
+
+        }
+
+        //create a maximum key value to enable processing below
+        //needs to be a merged key including all the keys from _matchkeys
+
+        _maxkeyvalue = _mergesets[_keyset][_mergesets[_keyset].length-1][_setkeys[_keyset]];
+
+        if (typeof (_maxkeyvalue) == 'number') {
+            _maxkeyvalue++;
+        } //increase so always greater than highest value (always assumed to be the last entry) TODO add max()
+        else
+            if (typeof (_maxkeyvalue) == 'string') {
+                _maxkeyvalue = "X" + _maxkeyvalue;
+            } //increase so always greater than highest value (always assumed to be the last entry) ignoring case sensitivity
+
+
+        //each set is an array of NDTF objects
+        //may have been already reformatted and renamed 
+
+        //store the initial key set details in the _output object
+
+        this.mergeoutput(_keyset);
+
+        //do until the key set records have all been processed
+
+        while (_mergesetindexes[_keyset] < _mergesets[_setid].length) {
+
+            //if we are less than all keys then write out the data and read the next key record
+            //if we match any key then store the data and read the next none key record
+            //if we are greater than any key then read the next none key record
+
+            for (var _setid in _storedsetids) {
+
+                if (_setid != _keyset) {
+
+                    if (_mergekeyvalues[_setid] < _mergekeyvalues[_keyset]) {
+                        _mergesetindexes[_setid]++;
+                    }
+                    else if (_mergekeyvalues[_setid] = _mergekeyvalues[_keyset]) {
+                        //merge this keys data into the output
+                        this.mergeoutput(_setid);
+                        //increment the index for this key
+                        _mergesetindexes[_setid]++;
+
+                        if (_mergesetindexes[_setid] < _mergesets[_setid].length) {
+                            _mergekeyvalues[_setid] = _mergesets[_setid][_mergesetindexes[_setid]]
+                        }
+                        else { //set this key value to be greater than the highest value in the keyset
+                            _mergekeyvalues[_setid] = _maxkeyvalue;
+                        }
+                    }
+
+                    if (_mergekeyvalues[_setid] > _mergekeyvalues[_keyset]) {_processedsetcount++ }
+
+                }
+
+            }
+
+            //have we processed all the data ?
+            //merge the keyset data into the output, and move to the next key value
+
+            if (_processedsetcount > _storedsetids.length - 2 ) { //-2 as we ignore the keyset and need to take one from length
+
+                //merge key data
+
+                //store into the new output set
+                _mergedsets.push();
+
+                //read the next one
+                _mergesetindexes[_keyset]++
+
+
+                //reset the processed count to 0
+                _processedsetcount = 0;
+            }
+
+        } 
+
+        return _mergedsets;
+
+    }
+
+    this.mergeoutput = function (setid) {
+
+        //_output will be:
+        // {setid:{},setid:{}}
+        //
+        // i.e. the stock set:
+        // {'TJX':{close:value,open:value,etc:value,date:timestamp},'stock';{}}
+
+
+        //here we merge the data in the _output object with the relevant data from the setid 
+
+        if (setid == _keyset) { //this is the key set so we store the key which will hold the array of values
+            _output['setid'] = {};
+        }
+
+        //now store the other fields we have requested
+        //output: [setid.field, setid.field, setid.field,..] // will produce a [setid.key:{setid.filed,etc,etc}]
+        //or null and just whatever hasn't been copied so far 
+        //the fields are entries in multiple arrays, keyed on any subsequent match keys
+
+
+
+
+
+    }
+
+    //multi key sort - each set is sorted by the keys in the config, the keys must be present in all sets
+    //at the end of the sort, all sets including the key set are sorted into multikey order, i.e.a within b within c etc
+    //each level has to be assessed for type primarily because string representation of numbers wont probably work !!
+    //_matchkeys is array of keyname,etc (setid was removed in init)
+
+    this.sortset = function (set) {
+
+        var _sortkeys = [];
+
+        //build the sort based on the first entry in the data set
+
+        for (var key in _matchkeys) {
+            if (typeof (set[key]) == 'number') { _sortkeys.push({ keytype: 'n' }); } //if a number
+            else
+                if (typeof (set[key]) == 'string') {//if a string, check sensitivity
+                    _sortkeys.push({ keytype: 's', casesensitive: _casesensitive });
+                }
+                else { console.error("sort key requested on value that is not string or numeric");}
+        }
+
+        set.sort(function (a, b) {this.comparekeys(a,b,_sortkeys)});
+
+        return set;
+
+    };
+
+    this.comparekeys = function (a, b, sortkeys) {
+
+        //based on the sortkeys, we return -1,0,1 
+        //            if (a < b) { return -1; }
+        //            if (a > b) { return 1; }
+        //            return 0;
+
+        // from left to right 
+
+        // if = then check next level, else sort this level
+
+        // for each key, if not equal sort and return, if equal and last key return 0
+
+        for (var idx = 0; idx < sortkeys.length; idx++) {
+
+            key = sortkeys[idx];
+            var keyvalue = { a: a[_matchkeys[idx]], b: b[_matchkeys[idx]] };
+            var lastkey = (idx = sortkeys.length - 1);
+
+            if (key.keytype == 'n') {
+                if (keyvalue.a < keyvalue.b) { return -1; }
+                if (keyvalue.a > keyvalue.b) { return 1; }
+            }
+
+            if (key.keytype == 's') {
+                if (key.casesensitive) {
+                    if (keyvalue.a.toLowerCase() < keyvalue.b.toLowerCase()) { return -1; }
+                    if (keyvalue.a.toLowerCase() > keyvalue.b.toLowerCase()) { return 1; }
+                }
+                else {
+                    if (keyvalue.a < keyvalue.b) { return -1; }
+                    if (keyvalue.a > keyvalue.b) { return 1; }
+                }
+            }
+
+            if (lastkey) { return 0;}
+
+        }
+
+    };
+
+    this.storeset = function (setid, set) {
+
+        //the timestamp value must be passed in numeric format (the provider should have already done that)
+
+        var result = _fs.writeFileSync(_path + setid + '.json', JSON.stringify((_presort) ? this.sortset(set) : set));
+
+        //if we haven't stored a set add it to list and the sort/merge key
+
+        if (_storedsetids.indexOf(setid) == -1) {
+            _storedsetids.push(setid);
+        }
+
+        if (_keyset == null) { //first stored set is the key set if not already set in init// 
+            _keyset = setid;
+        } 
+
+        return result;
+
+    }
+
+    this.recallset = function (setid,deleteonread=true) {
+
+        var recalledset = JSON.parse(_fs.readFileSync(_path + setid + '.json', 'utf8')); 
+
+        if (deleteonread) { //clean out the memory
+            _fs.unlinkSync(_path + setid + '.json');
+        }
+
+        return recalledset;
+
+    }
+
+}
+
 
 var _getJSONfile = function (filename) {
 
