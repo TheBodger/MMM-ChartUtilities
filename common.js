@@ -338,7 +338,7 @@ exports.mergeutils = function () {
         }
 
         _presort = config.sort;
-        _casesensitive = config.casesensitive;
+        _casesensitive = config.casesensitive || false;
         _matchkeys = config.matchkeys;
 
         //setup the default sortkey
@@ -403,7 +403,7 @@ exports.mergeutils = function () {
 
                         switch (self.comparekeys(_mergesets[_keyset][_mergesetindexes[_keyset]], _mergesets[_setid][_mergesetindexes[_setid]])) {
                             case -1:
-                                _mergesetindexes[_keyset]++ 
+                                _mergesetindexes[_keyset]++
                                 _output = {};
                                 self.mergeoutput(_keyset);
                                 //console.log("<")
@@ -415,9 +415,9 @@ exports.mergeutils = function () {
                             default: // 0
                                 self.mergeoutput(_setid);
                                 _mergesetindexes[_setid]++;
-                                _processedsetcount++; 
-                                //console.log("=")
-                                
+                                _processedsetcount++;
+                            //console.log("=")
+
                         }
                     }
                     else { //as we dont process this set as it has got the end we set it to processed
@@ -441,9 +441,9 @@ exports.mergeutils = function () {
                     if (_mergedsets[Object.keys(_output)[0]] == null) {
                         _mergedsets[Object.keys(_output)[0]] = []
                     }
-                    
+
                     _mergedsets[Object.keys(_output)[0]].push(_output[Object.keys(_output)[0]])
-                    
+
                 }
 
                 //read the next one and store it in output if we haven't hit the end of data
@@ -462,7 +462,7 @@ exports.mergeutils = function () {
 
         return _mergedsets;
 
-    }
+    };
 
     this.mergeoutput = function (setid) {
 
@@ -476,7 +476,7 @@ exports.mergeutils = function () {
         //here we merge the data in the _output object with the relevant data from the setid 
 
         if (setid == _keyset) { //this is the key set so we store the key which will hold the array of values if it isn't present
-            if (_output[_mergesets[setid][_mergesetindexes[setid]][_matchkeys[0]]]==null) {
+            if (_output[_mergesets[setid][_mergesetindexes[setid]][_matchkeys[0]]] == null) {
                 _output[_mergesets[setid][_mergesetindexes[setid]][_matchkeys[0]]] = {}; //should return the 1st key of the set value
             }
         }
@@ -492,7 +492,7 @@ exports.mergeutils = function () {
             }
         }
 
-    }
+    };
 
     //multi key sort - each set is sorted by the keys in the config, the keys must be present in all sets
     //at the end of the sort, all sets including the key set are sorted into multikey order, i.e.a within b within c etc
@@ -550,6 +550,41 @@ exports.mergeutils = function () {
 
     };
 
+    //function to prepare all the parameters to carry out a sort on a set that is passed to the sort
+    //and isn't stored or merged
+    //replaces the need to call init
+
+    this.preparesort = function (setid, item, sortkeys,casesensitive) {
+
+        var tempkeys = [];
+
+        sortkeys.forEach(key => tempkeys.push(setid + '.' + key));
+
+        this.init({ matchkeys: tempkeys, casesensitive: casesensitive })
+
+        if (_keyset == null) { //first stored set is the key set if not already set in init// 
+            _keyset = setid;
+        }
+
+        //build the sort based on the first entry in the key data set
+
+        if (_keyset == setid) {
+
+            _matchkeys.forEach(function (key) {
+
+                if (typeof (item[key]) == 'number') { _sortkeys.push({ keytype: 'n' }); } //if a number
+                else if (typeof (item[key]) == 'string') {//if a string, check sensitivity
+                    _sortkeys.push({ keytype: 's', casesensitive: _casesensitive });
+                }
+                else { console.error("sort key requested on value that is not string or numeric"); }
+            });
+
+        }
+
+
+
+    };
+
     this.storeset = function (setid, set) {
 
         if (_keyset == null) { //first stored set is the key set if not already set in init// 
@@ -580,8 +615,6 @@ exports.mergeutils = function () {
         if (_storedsetids.indexOf(setid) == -1) {
             _storedsetids.push(setid);
         }
-
-        
 
         return result;
 
