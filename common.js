@@ -133,8 +133,13 @@ exports.JSONutils = function () {
     this.getJSONURLnew = function (JSONconfig) { //check and load json from url
 
         var JSONbody = '';
+        var protocol = HTTP;
 
-        const req = HTTPS.request(JSONconfig.options, (res) => {
+        //check if HTTP or HTTPS
+
+        if (JSONconfig.options.href.toLowerCase().indexOf("https") > -1) { protocol = HTTPS;}
+
+        const req = protocol.request(JSONconfig.options, (res) => {
             //console.log('statusCode:', res.statusCode);
             //console.log('headers:', res.headers);
 
@@ -266,6 +271,12 @@ exports.getkeyedJSON = function (jsonobject, dotdelimitedkeys) {
     var tempJSONobj = jsonobject[keynames[0]];
 
     for (var kidx = 1; kidx < keynames.length; kidx++) {
+
+        //validate that we haven't hit a null entry and still looking for subsequent keys
+
+        if (tempJSONobj == null) {
+            return null
+        };
 
         tempJSONobj = tempJSONobj[keynames[kidx]];
 
@@ -580,8 +591,6 @@ exports.mergeutils = function () {
             });
 
         }
-
-
 
     };
 
