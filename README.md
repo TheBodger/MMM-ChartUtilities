@@ -307,7 +307,7 @@ note no information is included at the parent level and the subject is excluded 
 }
 
 { "2003":["country":"GB","Births":2543},"country":"FR","Births":1234}]}
-
+```
 
 #### ----------------------------------------------------------------------------------------------------------
 
@@ -369,7 +369,7 @@ which is similar to the set joiner but for the setid it uses the formatted times
 and instead of an array of sets we have a list of sets
 
 so lets leverage that 
-
+```
 //{
 //    "2003": [
 //        {
@@ -394,7 +394,7 @@ so lets leverage that
 
 //      ....
 
-
+```
 
 Parameters:
 
