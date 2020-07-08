@@ -160,25 +160,25 @@ value = 254 - not necessary, as the actual count should be calculated from the i
 and as a fully formed single combined subject example, 
 
 ```
-{subject:GB, 
-object:country,
-set:
-{ //start of set
-{object:isoxxxx_name,value:Great Britain and northern island},
-{object:population,value:65001232,timestamp:2010-10-02 00:00:00}
-}, //end of set
-set:
-{  //start of set
-{object:birthrate,
-set:
-{  //start of set
-{timestamp:1900,value:6498},
-{timestamp:1901,value:6398},
-{timestamp:1902,value:6698},
-{timestamp:1903,value:7298},
-{timestamp:1904,value:6998},
-}  //end of set
-}  //end of set
+{	subject:GB, 
+	object:country,
+	set:
+	{ //start of set
+		{object:isoxxxx_name,value:Great Britain and northern island},
+		{object:population,value:65001232,timestamp:2010-10-02 00:00:00}
+	}, //end of set
+	set:
+	{  //start of set
+		{object:birthrate,
+		set:
+			{  //start of set
+				{timestamp:1900,value:6498},
+				{timestamp:1901,value:6398},
+				{timestamp:1902,value:6698},
+				{timestamp:1903,value:7298},
+				{timestamp:1904,value:6998},
+			}  //end of set
+	}  //end of set
 }  //end of combined subject
 ```
 
