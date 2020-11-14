@@ -299,7 +299,7 @@ exports.mergeutils = function () {
     //  sort date within stock
     //
     //  main match is on stock, if stocks equal then process dates
-    //  if key stock is less than all other stocks, then we have finised this stock and move onto next stock
+    //  if key stock is less than all other stocks, then we have finished this stock and move onto next stock
     //  if key stock matches an other stock then check at dates level and determine < = >
     //
     //  matching occurs at lowest level, unless 1st level, then the data gets stored as new entries in the array
@@ -348,9 +348,11 @@ exports.mergeutils = function () {
             _path = '/';
         }
 
-        _presort = config.sort;
+        //additional setup if any of the passed merge options are unset
+
+        _presort = config.sort || false;
         _casesensitive = config.casesensitive || false;
-        _matchkeys = config.matchkeys;
+        _matchkeys = config.matchkeys || [];
 
         //setup the default sortkey
 
