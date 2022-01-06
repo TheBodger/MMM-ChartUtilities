@@ -184,7 +184,7 @@ and as a fully formed single combined subject example,
 
 and as a fully formed multiple combined subject example, held in JSON notation as it should be (not all full timestamps are entered for brevity)
 
-Note that instead of using the variable name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new child hierarchy level is spawned, the index starts back at "1" for that particular branch. In an enhanced set, these setids can be replaced any of the 4 descriptors, for example a formatted timestamp. THe sets may also be keyed on a subject or date for example, in this case it would probably be the country name or ISO standard abbreviation.
+Note that instead of using the variable name *set*, it is replaced by a relative index at that level within the json hierarchy. this ensures that valid json is created. so the first set will be called "1", the second at the same level "2" and so on. As soon as a new child hierarchy level is spawned, the index starts back at "1" for that particular branch. In an enhanced set, these setids can be replaced by any of the 4 descriptors, for example a formatted timestamp. Thr sets may also be keyed on a subject or date for example, in this case it would probably be the country name or ISO standard abbreviation.
 
 ```JSON
 
