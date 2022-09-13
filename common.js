@@ -59,6 +59,16 @@ exports.configutils = function () {
 
 }
 
+//add soap utilities
+
+		//add SOAP utilities here
+		//var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+		//var xhr = new XMLHttpRequest();
+		//xhr.open("POST", url);
+		//xhr.setRequestHeader("Content-Type", "text/xml;charset=UTF-8", "SOAPAction", "http://thalesgroup.com/RTTI/2016-02-16/ldb/GetDepBoardWithDetails")//, "Accept-encoding", "gzip,x-gzip,deflate,x-bzip2")
+		//xhr.send(data);
+
+
 exports.JSONutils = function () {
 
     this.putJSON = function (filename, JSONobject) { //writes async to file or anything we feel like
