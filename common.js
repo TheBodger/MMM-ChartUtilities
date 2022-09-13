@@ -9,6 +9,8 @@ const ms = require('memfs');
 const HTTP = require("http");
 const HTTPS = require("https");
 
+const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
 exports.configutils = function () {
 
     this.setconfig = function (defaults,paramsrequired) {
@@ -68,7 +70,78 @@ exports.configutils = function () {
 		//xhr.setRequestHeader("Content-Type", "text/xml;charset=UTF-8", "SOAPAction", "http://thalesgroup.com/RTTI/2016-02-16/ldb/GetDepBoardWithDetails")//, "Accept-encoding", "gzip,x-gzip,deflate,x-bzip2")
 		//xhr.send(data);
 
+exports.SOAPutils = function () {
 
+    this.getSOAP = function (config) {
+
+        var tempSOAP = ''
+
+        if (config.useHTTP) {
+
+            tempSOAP = this.getSOAPURL(config.input);
+        }
+
+        else {
+
+            tempSOAP = this.getSOAPstring(fs.readFileSync(config.input).toString()); //returns a buffer, so convert to string
+
+        }
+
+        if (tempSOAP == null) {
+            console.error("failed to obtain valid data");
+        }
+
+        return tempSOAP;
+
+    };
+
+    this.getSOAPURLnew = function (SOAPconfig) { //check and load SOAP from url
+
+        var SOAPbody = '';
+        var protocol = HTTP;
+
+        var xhr = new XMLHttpRequest();
+
+        //check if HTTP or HTTPS
+
+        if (SOAPconfig.baseurl.href.toLowerCase().indexOf("https") > -1) { protocol = HTTPS; }
+
+        xhr.open("POST", SOAPconfig.options.baseurl);
+
+        var counter = 1
+        var key = ""
+        var value = ""
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                console.log(xhr.status);
+                console.log(xhr.responseText);
+                var parseString = require('xml2js').parseString;
+                parseString(xhr.responseText, function (err, result) {
+                    SOAPconfig.callback(SOAPconfig, result);
+                    SOAPconfig.SOAPerror(err);
+                });
+            }
+        };
+
+        SOAPconfig.options.baseheaders.forEach(element => {
+            if (counter == 1) {
+                key = element;
+                counter = 2;
+            }
+            else {
+                value = element;
+                xhr.setRequestHeader(key, value);
+                counter = 1;
+            }
+        });
+
+		//xhr.setRequestHeader("Content-Type", "text/xml;charset=UTF-8", "SOAPAction", "http://thalesgroup.com/RTTI/2016-02-16/ldb/GetDepBoardWithDetails")//, "Accept-encoding", "gzip,x-gzip,deflate,x-bzip2")
+        xhr.send(SOAPconfig.options.basedata);
+
+    };
+
+}
 exports.JSONutils = function () {
 
     this.putJSON = function (filename, JSONobject) { //writes async to file or anything we feel like
