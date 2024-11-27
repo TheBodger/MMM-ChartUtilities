@@ -95,24 +95,6 @@ exports.SOAPutils = function () {
 
     };
 
-    this.getSOAPnew = function (SOAPconfig) { // a config that may or may not be for a SOAP pull
-
-        //uses either http, https or fs to get data and process it through the callback.
-        //because of the various read options, the config is passed deeper and deeper, hopefully returning at some point still intact
-
-        if (SOAPconfig.config.useHTTP) { // HTTP or HTTPS
-
-            this.getSOAPURLnew(SOAPconfig);
-        }
-
-        else {
-
-            this.getSOAPfilenew(SOAPconfig);
-
-        }
-
-    };
-
     this.getSOAPURLnew = function (SOAPconfig) { //check and load SOAP from url
 
         var SOAPbody = '';
@@ -120,7 +102,11 @@ exports.SOAPutils = function () {
 
         var xhr = new XMLHttpRequest();
 
-        xhr.open("POST", SOAPconfig.config.baseurl);
+        //check if HTTP or HTTPS
+
+        if (SOAPconfig.baseurl.href.toLowerCase().indexOf("https") > -1) { protocol = HTTPS; }
+
+        xhr.open("POST", SOAPconfig.options.baseurl);
 
         var counter = 1
         var key = ""
@@ -138,7 +124,7 @@ exports.SOAPutils = function () {
             }
         };
 
-        SOAPconfig.config.baseheaders.forEach(element => {
+        SOAPconfig.options.baseheaders.forEach(element => {
             if (counter == 1) {
                 key = element;
                 counter = 2;
@@ -146,15 +132,14 @@ exports.SOAPutils = function () {
             else {
                 value = element;
                 xhr.setRequestHeader(key, value);
-                console.log(key,xhr.getRequestHeader(key))
                 counter = 1;
             }
         });
 
-        xhr.send(SOAPconfig.config.basedata);
+		//xhr.setRequestHeader("Content-Type", "text/xml;charset=UTF-8", "SOAPAction", "http://thalesgroup.com/RTTI/2016-02-16/ldb/GetDepBoardWithDetails")//, "Accept-encoding", "gzip,x-gzip,deflate,x-bzip2")
+        xhr.send(SOAPconfig.options.basedata);
 
     };
-
 
 }
 exports.JSONutils = function () {
@@ -235,7 +220,10 @@ exports.JSONutils = function () {
 
         //check if HTTP or HTTPS
 
-        if (JSONconfig.options.href.toLowerCase().indexOf("https") > -1) { protocol = HTTPS;}
+		if (JSONconfig.options.href.toLowerCase().indexOf("https") > -1) {
+			protocol = HTTPS;
+			JSONconfig.options.headers = { 'User-Agent': 'Mozilla/5.0' } //Required for latest YAhoo
+		}
 
         const req = protocol.request(JSONconfig.options, (res) => {
             //console.log('statusCode:', res.statusCode);
