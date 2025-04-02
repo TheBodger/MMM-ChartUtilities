@@ -23,7 +23,7 @@ cd ../
 # we dont install moment as it is already present by default in MM
 # we dont install fs as it is part of core node-js apparently. On windows you may need to install it 
 
-npm install linq
+npm install linq@3
 
 #Special install of require.js to support amcharts. Under the vendor directory as the MMM-ChartDisplay module needs to know where it is
 
