@@ -51,21 +51,21 @@ the MMM-ChartDisplay module relies on the AMCharts v4 library with helpers copie
 
 The core principle is that the provider must produce information in such a way that the aggregator has everything it needs and it can start passing meaningful information to the display as soon as it receives and aggregates it. 
 
-In practice this means that the provider most extract and merge all data required to meet the requirements of the consumer, and the consumer will never need to add to this data, merely format it ready for display as each set of data arrives from the provider. (this principle has been ehnaced with the introduction of reference data. See the MMM-ChartDisplay module for more details)
+In practice this means that the provider most extract and merge all data required to meet the requirements of the consumer, and the consumer will never need to add to this data, merely format it ready for display as each set of data arrives from the provider. (this principle has been enhanced with the introduction of reference data. See the MMM-ChartDisplay module for more details)
 
 Considering the richness of data that may be required, in terms of both breadth and depth and that this data will be a mix of live and static, then the provider may make use of previously locally stored data as part of its inputs to the process of creating the data to provide to the consumer. (See above about reference data)
 
 However, as long as the requisite data is all provided within a single payload, even if further data will be sent later, then the aggregator can carry out a merge/formatting process if required. __The key principle is that the aggregator must receive the breadth of data required to meet the demands of the display.__
 
-To illustrate this, consider a time series graph of all countrie's death rate by populations from a particular set of diseases. As a minimum the aggregator needs the current death rate of one disease and population from a single country in question. As long as this data is provided in a single payload, then the aggregator can merge/format the data and the display can create a graph. As subsequent countries/diseases/time entries arrive, they can be added to the aggregated set and displayed successfully.
+To illustrate this, consider a time series graph of all countries' death rate by populations from a particular set of diseases. As a minimum the aggregator needs the current death rate of one disease and population from a single country in question. As long as this data is provided in a single payload, then the aggregator can merge/format the data and the display can create a graph. As subsequent countries/diseases/time entries arrive, they can be added to the aggregated set and displayed successfully.
 
 In practice, this example can be met with a live capture of current disease deaths merged with locally held/cached population figures, from one provider, whilst another caches and sends the relevant data for the historical period, or reference data is used if relevant.
 
 __TODO - note, the merging of data has not yet been included within the Chart modules__
 
-The management of the cached data can be carried out by the provider, such that when it is started it checks for the cached data's relevance and refreshs it accordingly and from that point on uses the cached data only. It is not a necessity to have caching, as long as all required data can be found in a live source that can be converted to NDTF for consumption.
+The management of the cached data can be carried out by the provider, such that when it is started it checks for the cached data's relevance and refreshes it accordingly and from that point on uses the cached data only. It is not a necessity to have caching, as long as all required data can be found in a live source that can be converted to NDTF for consumption.
 
-### NDTF - Neils Data Transfer Format.
+### NDTF - Neil's or Normalised Data Transfer Format.
 
 #### base schema: see notes below and extracts on RDF
 
@@ -92,7 +92,7 @@ value = green
 time stamp = the first time someone worked this out
 ```
 
-to extend the schema, there are two types of vitual information, **observations** and **descriptions**.
+to extend the schema, there are two types of virtual information, **observations** and **descriptions**.
 
 a description enhances a subject with further details and an observation is a specific value captured about a subject.
 
@@ -120,11 +120,11 @@ As this is a rather inefficient, though very clear, way of expressing informatio
 
 __Note: some of the principles of SETS in this context have been implemented within the ChartDisplay module and then passed to the charts so as to provide the information the chart requires. Hence they are only transitionary and not visible nor storable__
 
-The concept of the set allows any particular entry to inherit information from its parent. This in theory can be any of the 4  data descriptors (Subject, object, Timestamp, value). Normally the value will be present along with the timestamp for observational data, for descriptive data any combinations may be presented (i.e. set{subject=coutries population in year, timestamp=year,array of (object=countryname,value=population)
+The concept of the set allows any particular entry to inherit information from its parent. This in theory can be any of the 4  data descriptors (Subject, object, Timestamp, value). Normally the value will be present along with the timestamp for observational data, for descriptive data any combinations may be presented (i.e. set{subject=countries population in year, timestamp=year, array of (object=countryname,value=population)
 
 This enables the creation of the concept of a **combined subject** from one or more individual items for sharing across applications or storing data in more efficient ways when serialised. Any set must be capable of being uncombined back into individual items. 
 
-The set is implemented in JSON as an array, with a unique index identifying each set at the same level within the JSON hierarchy. The set identifier will be an increasting value starting at 1, however, enhanced sets may have a setid that represents a subject, object value or timestamp.
+The set is implemented in JSON as an array, with a unique index identifying each set at the same level within the JSON hierarchy. The set identifier will be an increasing value starting at 1, however, enhanced sets may have a setid that represents a subject, object value or timestamp.
 
 #### combined subject and sets
 
