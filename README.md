@@ -15,10 +15,10 @@ To install the module, use your bash terminal to:
 2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-ChartUtilities`
 3. To install all the other MMM-Chart.... modules, and their nodejs dependencies into the root of magicmirror (reduces disk usage) <BR />`cd MMM-ChartUtilities`<BR />(if on a unix device) `sudo chmod +x install.sh`<BR />`./install.sh`
 4. Install memfs,xmlhttprequest,xml2js
-    cd to MagicMirror module and enter 
-        npm install memfs
-        npm install xmlhttprequest
-        npm install xml2js
+    <br />`cd to MagicMirror module and enter` 
+        <br />`npm install memfs`
+        <br />`npm install xmlhttprequest`
+        <br />`npm install xml2js`
 
 ### Included Helpers and structures.
 
